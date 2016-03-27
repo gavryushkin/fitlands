@@ -99,26 +99,26 @@ TYPE <- c(rep(1, 2), rep(2, 8), rep(3, 24), rep(4, 12), rep(5, 24), rep(6, 4));
 # Rows are the fitness values ordered according to the genotype:
 # 000, 001, 010, 011, 100, 101, 110, 111
 
-fvalues = read.table("fitnessValues.txt");
+fvalues = as.matrix(read.table("fitnessValues.txt"));
 
  
 # Compute filand shape for fitness values f:
 
 fitlandShape <- function(f, SHAPE) {
-
 	F <- vector();
 	for (i in 1:length(SHAPE)) {
 		F[i] <- f %*% SHAPE[[i]];
 	}
-
 	return(which(F == max(F)));
 }
 
 
-for (i in 1:length(fvalues)) {
-	x = fitlandShape(fvalues[i], SHAPE);
+# Write pairs (fitlandShape, fitlandType) to fitlandShapes.txt
+
+for (i in 1:length(fvalues[,1])) {
+	x = fitlandShape(fvalues[i,], SHAPE);
 	y <- vector();
-	y <- c(x, TYPE(x));
+	y <- c(x, TYPE[x]);
 	write(y, file = "fitlandShapes.txt",
 	ncolumns = 2,
 	append = TRUE)
