@@ -118,10 +118,12 @@ fitlandShape <- function(f, SHAPE) {
 for (i in 1:length(fvalues[,1])) {
 	x = fitlandShape(fvalues[i,], SHAPE);
 	y <- vector();
-	y <- c(x, TYPE[x]);
-	print(y);
-	write(y, file = "fitlandShapes.txt",
-	ncolumns = 2,
-	append = TRUE)
+	for (j in 1:length(x)) {
+		y <- c(x[j], TYPE[x[j]]);
+		print(y);
+		write(y, file = "fitlandShapes.txt",
+		ncolumns = 2,
+		append = TRUE)		
+	}
 }
 
