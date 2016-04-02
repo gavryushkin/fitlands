@@ -1,3 +1,5 @@
+setwd("./")
+
 # List of fitland shapes:
 
 SHAPE <- list(
@@ -114,16 +116,26 @@ fitlandShape <- function(f, SHAPE) {
 
 
 # Write pairs (fitlandShape, fitlandType) to fitlandShapes.txt
+# The third column has 0 if the fitness values correspond to exactly one shape, otherwise the third column enumerates multiple shapes starting from 1.
+# If the working folder contains the file called fitlandShapes.txt, that file will be appended. 
 
 for (i in 1:length(fvalues[,1])) {
 	x = fitlandShape(fvalues[i,], SHAPE);
 	y <- vector();
-	for (j in 1:length(x)) {
-		y <- c(x[j], TYPE[x[j]]);
+	if (length(x) == 1){
+		y <- c(x[1], TYPE[x[1]], 0);
 		print(y);
 		write(y, file = "fitlandShapes.txt",
-		ncolumns = 2,
-		append = TRUE)		
-	}
+		ncolumns = 3,
+		append = TRUE);
+	} else {
+		print("Non-triangulation shapes present!");
+		for (j in 1:length(x)) {
+			y <- c(x[j], TYPE[x[j]], j);
+			print(y);
+			write(y, file = "fitlandShapes.txt",
+			ncolumns = 3,
+			append = TRUE);
+		}}
 }
 
