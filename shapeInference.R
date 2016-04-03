@@ -139,3 +139,18 @@ for (i in 1:length(fvalues[,1])) {
 		}}
 }
 
+
+# Compute probabilities of shapes from fitlandShapes.txt:
+
+shapes = as.matrix(read.table("fitlandShapes.txt"))
+
+shape_probabilities <- vector(mode = "double", length = 74);
+N <- length(shapes[,1])
+for (i in 1:N) {
+	shape_probabilities[shapes[i][1]] = shape_probabilities[shapes[i][1]] + 1;
+}
+
+shape_probabilities = shape_probabilities / N;
+print(shape_probabilities);
+hist(shapes[,1], freq = FALSE, breaks = N);
+
