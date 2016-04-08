@@ -89,29 +89,29 @@ SHAPE <- list(
 	c(2, 2, 6, 2, 2, 6, 2, 2),	# 72
 	c(2, 6, 2, 2, 2, 2, 6, 2),	# 73
 	c(6, 2, 2, 2, 2, 2, 2, 6)	# 74
-);
+)
 
 
 # TYPE[i] == epistasis type of fitland shape number i:
 
-TYPE <- c(rep(1, 2), rep(2, 8), rep(3, 24), rep(4, 12), rep(5, 24), rep(6, 4));
+TYPE <- c(rep(1, 2), rep(2, 8), rep(3, 24), rep(4, 12), rep(5, 24), rep(6, 4))
 
 
 # Read fitness values from file:
 # Rows are the fitness values ordered according to the genotype:
 # 000, 001, 010, 011, 100, 101, 110, 111
 
-fvalues = as.matrix(read.table("fitnessValues.txt"));
+fvalues = as.matrix(read.table("fitnessValues.txt"))
 
  
 # Compute filand shape for fitness values f:
 
 fitlandShape <- function(f, SHAPE) {
-	F <- vector();
+	F <- vector()
 	for (i in 1:length(SHAPE)) {
-		F[i] <- f %*% SHAPE[[i]];
+		F[i] <- f %*% SHAPE[[i]]
 	}
-	return(which(F == max(F)));
+	return(which(F == max(F)))
 }
 
 
@@ -120,22 +120,20 @@ fitlandShape <- function(f, SHAPE) {
 # If the working folder contains the file called fitlandShapes.txt, that file will be appended. 
 
 for (i in 1:length(fvalues[,1])) {
-	x = fitlandShape(fvalues[i,], SHAPE);
-	y <- vector();
+	x = fitlandShape(fvalues[i,], SHAPE)
+	y <- vector()
 	if (length(x) == 1){
-		y <- c(x[1], TYPE[x[1]], 0);
-		print(y);
+		y <- c(x[1], TYPE[x[1]], 0)
 		write(y, file = "fitlandShapes.txt",
 		ncolumns = 3,
-		append = TRUE);
+		append = TRUE)
 	} else {
-		print("Non-triangulation shapes present!");
+		print("Non-triangulation shapes present!")
 		for (j in 1:length(x)) {
-			y <- c(x[j], TYPE[x[j]], j);
-			print(y);
+			y <- c(x[j], TYPE[x[j]], j)
 			write(y, file = "fitlandShapes.txt",
 			ncolumns = 3,
-			append = TRUE);
+			append = TRUE)
 		}}
 }
 
@@ -144,13 +142,20 @@ for (i in 1:length(fvalues[,1])) {
 
 shapes = as.matrix(read.table("fitlandShapes.txt"))
 
-shape_probabilities <- vector(mode = "double", length = 74);
+shape_probabilities <- vector(mode = "double", length = 74)
 N <- length(shapes[,1])
 for (i in 1:N) {
-	shape_probabilities[shapes[i][1]] = shape_probabilities[shapes[i][1]] + 1;
+	shape_probabilities[shapes[i][1]] <- shape_probabilities[shapes[i][1]] + 1
 }
+shape_probabilities <- shape_probabilities / N
 
-shape_probabilities = shape_probabilities / N;
-print(shape_probabilities);
-hist(shapes[,1], freq = FALSE, breaks = N);
+# Print shape probability histogram into shapeProbaHisto.pdf:
+
+print(shape_probabilities)
+pdf("shapeProbaHisto.pdf")
+hist(shapes[,1], freq = FALSE, breaks = N)
+dev.off()
+
+
+# 
 
