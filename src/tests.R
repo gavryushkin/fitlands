@@ -1,3 +1,5 @@
+setwd("~/Documents/fitlands/")
+
 # Generate 1000 random fitness profiles from [0,1]:
 
 for (i in 1:1000) {

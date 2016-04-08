@@ -1,4 +1,4 @@
-setwd("./")
+setwd("~/Documents/fitlands/")
 
 # List of fitland shapes:
 
