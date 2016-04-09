@@ -241,9 +241,10 @@ secondaryPolyEdges <- c(
 spg <- make_empty_graph(n = 74, directed = FALSE) %>%
 	add_edges(secondaryPolyEdges) %>%
 	set_edge_attr("color", value = "red")
+vertex_sizes <- shape_probabilities * 500
 E(spg)[[]]
-plot(spg)
+plot(spg, layout = layout_with_kk, vertex.size = vertex_sizes)
 pdf("secondaryPolyGraph.pdf")
-plot(spg)
+plot(spg, layout = layout_with_kk, vertex.size = vertex_sizes)
 dev.off()
 
