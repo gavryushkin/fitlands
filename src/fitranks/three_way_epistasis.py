@@ -6,7 +6,7 @@ __author__ = '@gavruskin'
 
 
 # The number of tries to detect zero epistasis.
-N = 1000000
+N = 1000
 
 
 def get_next_ordering(x):
@@ -54,10 +54,13 @@ def write_epistasis_to_file():
         epistasis = fitness_values[fitness.index(1)] + fitness_values[fitness.index(5)] + fitness_values[fitness.index(6)] + fitness_values[fitness.index(7)] - fitness_values[fitness.index(2)] - fitness_values[fitness.index(3)] - fitness_values[fitness.index(4)] - fitness_values[fitness.index(8)]
         if epistasis1 * epistasis < 0:
             ordering = get_next_ordering(ordering)
+            if ordering == [8, 7, 6, 5, 4, 3, 2, 1]:
+                epistasis_file.close()
+                return
             fitness = ordering_to_fitness(ordering)
             i = 0
         i += 1
-        if i == N:
+        if i >= N:
             epistasis_file.write(str(fitness) + "\n")
             # DEBUG:
             print "This one!! :"
