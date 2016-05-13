@@ -40,6 +40,7 @@ def get_random_fitness_values():
 def write_epistasis_to_file():
     if not os.path.isfile("./epistasis.txt"):
         epistasis_file = open("epistasis.txt", "w")
+        epistasis_file.write("IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6, w_110 = w_7, w_111 = w_8\n")
     else:
         print "File epistasis.txt is not empty"
         return
