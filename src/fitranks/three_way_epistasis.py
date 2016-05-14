@@ -6,7 +6,7 @@ __author__ = '@gavruskin'
 
 
 # The number of tries to detect zero epistasis.
-N = 1000
+N = 100000
 
 
 def get_next_ordering(x):
@@ -38,8 +38,8 @@ def get_random_fitness_values():
 
 # IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6, w_110 = w_7, w_111 = w_8
 def write_epistasis_to_file():
-    if not os.path.isfile("./epistasis.txt"):
-        epistasis_file = open("epistasis.txt", "w")
+    if not os.path.isfile("./epistasis_with_%s_cheks.txt" % N):
+        epistasis_file = open("epistasis_with_%s_cheks.txt" % N, "w")
         epistasis_file.write("IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6, w_110 = w_7, w_111 = w_8\n")
     else:
         print "File epistasis.txt is not empty"
