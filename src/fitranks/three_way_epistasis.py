@@ -86,16 +86,29 @@ def get_random_fitness_values():
 def list_epistasis():
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
     fitness = [1, 2, 3, 4, 5, 6, 7, 8]
+    number = 0
     if epistsis(fitness):
+        number += 1
         print str(fitness)
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
         fitness = ordering_to_fitness(ordering)
         if epistsis(fitness):
+            number += 1
             print str(fitness)
+    print "The total number of epistases is " + str(number) + "."
 
 
 list_epistasis()
+
+
+# epi_file = open("./epistasis_with_100000_cheks.txt", "r")
+# for line in epi_file:
+#     line = line.replace("[", "")
+#     line = line.replace("]", "")
+#     ranks = [int(s) for s in line.split(', ')]
+#     if not epistsis(ranks):
+#         print "Pizdec!"
 
 
 # IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6, w_110 = w_7, w_111 = w_8
