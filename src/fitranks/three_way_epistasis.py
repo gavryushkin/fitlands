@@ -54,7 +54,7 @@ def epi_negatives_get(i, w):
 
 # Returns true if fitness ranks w imply positive epistasis.
 def epistasis_positive(w):
-    for i in range(3):
+    for i in range(4):
         if not epi_positives_get(i, w) >= epi_negatives_get(i, w):
             return False
     return True
@@ -62,7 +62,7 @@ def epistasis_positive(w):
 
 # Returns true if fitness ranks w imply negative epistasis.
 def epistasis_negative(w):
-    for i in range(3):
+    for i in range(4):
         if not epi_positives_get(i, w) <= epi_negatives_get(i, w):
             return False
     return True
