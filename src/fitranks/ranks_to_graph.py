@@ -48,9 +48,6 @@ def graph_from_ranks_to_file():
     ranks_file.close()
 
 
-graph_from_ranks_to_file()
-
-
 def number_of_different_graphs():
     graphs_file = open("./fitness_graph.txt", "r")
     graphs_seen = set()
@@ -66,6 +63,3 @@ def number_of_different_graphs():
     graphs_file.close()
     outfile.close()
     return
-
-
-number_of_different_graphs()
