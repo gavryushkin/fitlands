@@ -78,7 +78,7 @@ def strict_epistasis_for_graph(graph):
 
 
 def strict_epistasis():
-    output = set()
+    output = []
     ranks_file = open("./ranks.txt", "r")
     graphs = set()
     unique_graphs = []
@@ -91,10 +91,11 @@ def strict_epistasis():
             graphs.add(str(new_graph))
             unique_graphs.append(new_graph)
             if strict_epistasis_for_graph(new_graph):
-                output.add(str(new_graph))
+                output.append(new_graph)
                 print str(new_graph)  # TODO: print to file?
     ranks_file.close()
-    print "\n The number of graphs that have a strict epistasis is " + str(len(output))
+    print "\nThe number of graphs that have a strict epistasis is " + str(len(output))
+    print "The number of graphs that have an epistasis is " + str(len(graphs))
     return output
 
 
