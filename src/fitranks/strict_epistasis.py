@@ -51,8 +51,8 @@ def consistent_rankings(graph):
             good = False
         else:
             i += 1
-        if good:
-            output.append(fitness)
+    if good:
+        output.append(fitness)
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
         fitness = ordering_to_fitness(ordering)
@@ -92,7 +92,7 @@ def strict_epistasis():
             unique_graphs.append(new_graph)
             if strict_epistasis_for_graph(new_graph):
                 output.add(str(new_graph))
-                print str(new_graph)  # TODO: rm this---debugging
+                print str(new_graph)  # TODO: print to file?
     ranks_file.close()
     print "\n The number of graphs that have a strict epistasis is " + str(len(output))
     return output
