@@ -5,8 +5,7 @@ import os.path
 __author__ = '@gavruskin'
 
 
-# The number of tries to detect zero epistasis.
-N = 100000
+N = 100000  # Number of iteration for the random algorithm.
 
 
 def get_next_ordering(x):
@@ -33,8 +32,7 @@ def ordering_to_fitness(x):
 
 
 # Returns i-th element of w which has + sign in the epistasis value.
-def epi_positives_get(i, w):
-    positives = {1, 5, 6, 7}
+def epi_positives_get(i, w, positives):
     positives_fitness_ranks = []
     for j in range(len(w)):
         if w[j] in positives:
@@ -43,8 +41,7 @@ def epi_positives_get(i, w):
 
 
 # Returns i-th element of w which has - sign in the epistasis value.
-def epi_negatives_get(i, w):
-    negatives = {2, 3, 4, 8}
+def epi_negatives_get(i, w, negatives):
     negatives_fitness_ranks = []
     for j in range(len(w)):
         if w[j] in negatives:
@@ -53,27 +50,50 @@ def epi_negatives_get(i, w):
 
 
 # Returns true if fitness ranks w imply positive epistasis.
-def epistasis_positive(w):
-    for i in range(4):
-        if not epi_positives_get(i, w) >= epi_negatives_get(i, w):
+def epistasis_positive(w, positives, negatives):
+    if len(positives) != len(negatives):
+        print "The number of positives and negatives are different!"
+    for i in range(len(positives)):
+        if not epi_positives_get(i, w, positives) >= epi_negatives_get(i, w, negatives):
             return False
     return True
 
 
 # Returns true if fitness ranks w imply negative epistasis.
-def epistasis_negative(w):
-    for i in range(4):
-        if not epi_positives_get(i, w) <= epi_negatives_get(i, w):
+def epistasis_negative(w, positives, negatives):
+    if len(positives) != len(negatives):
+        print "The number of positives and negatives are different!"
+    for i in range(len(negatives)):
+        if not epi_positives_get(i, w, positives) <= epi_negatives_get(i, w, negatives):
             return False
     return True
 
 
 # Returns true if fitness ranks w imply epistasis.
-def epistasis(w):
-    if epistasis_positive(w) or epistasis_negative(w):
+def epistasis(w, positives, negatives):
+    if epistasis_positive(w, positives, negatives) or epistasis_negative(w, positives, negatives):
         return True
     else:
         return False
+
+
+def list_epistasis(positives, negatives, circuit_name):
+    epi_ranks_file = open("./circuit_%s_orders.txt" % circuit_name, "w")
+    ordering = [1, 1, 1, 1, 1, 1, 1, 1]
+    fitness = [1, 2, 3, 4, 5, 6, 7, 8]
+    number = 0
+    if epistasis(fitness, positives, negatives):
+        number += 1
+        epi_ranks_file.write(str(fitness) + "\n")
+    while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
+        ordering = get_next_ordering(ordering)
+        fitness = ordering_to_fitness(ordering)
+        if epistasis(fitness, positives, negatives):
+            number += 1
+            epi_ranks_file.write(str(fitness) + "\n")
+    epi_ranks_file.close()
+    print "The total number of epistases is " + str(number) + \
+          ". Their complete list has been written to circuit_%s_orders.txt" % circuit_name
 
 
 def get_random_fitness_values():
@@ -81,25 +101,6 @@ def get_random_fitness_values():
     for i in range(8):
         z.append(random.uniform(0, 1))
     return sorted(z)
-
-
-def list_epistasis():
-    ordering = [1, 1, 1, 1, 1, 1, 1, 1]
-    fitness = [1, 2, 3, 4, 5, 6, 7, 8]
-    number = 0
-    if epistasis(fitness):
-        number += 1
-        print str(fitness)
-    while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
-        ordering = get_next_ordering(ordering)
-        fitness = ordering_to_fitness(ordering)
-        if epistasis(fitness):
-            number += 1
-            print str(fitness)
-    print "The total number of epistases is " + str(number) + "."
-
-
-# list_epistasis()
 
 
 # IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6, w_110 = w_7, w_111 = w_8

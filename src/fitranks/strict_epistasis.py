@@ -97,6 +97,3 @@ def strict_epistasis():
     print "\nThe number of graphs that have a strict epistasis is " + str(len(output))
     print "The number of graphs that have an epistasis is " + str(len(graphs))
     return output
-
-
-strict_epistasis()
