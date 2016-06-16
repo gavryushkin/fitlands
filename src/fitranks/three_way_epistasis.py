@@ -32,63 +32,70 @@ def ordering_to_fitness(x):
 
 
 # Returns i-th element of w which has + sign in the epistasis value.
-def epi_positives_get(i, w, positives):
+def epi_positives_get(i, w, positives, repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
     positives_fitness_ranks = []
     for j in range(len(w)):
+        # if w[j] in positives and repetitions[j] == 1:   # TODO: This and the next line are unnecessary.
+        #     positives_fitness_ranks.append(j)
         if w[j] in positives:
-            positives_fitness_ranks.append(j)
+            for rep in range(repetitions[j]):
+                positives_fitness_ranks.append(j)
     return positives_fitness_ranks[i]
 
 
 # Returns i-th element of w which has - sign in the epistasis value.
-def epi_negatives_get(i, w, negatives):
+def epi_negatives_get(i, w, negatives, repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
     negatives_fitness_ranks = []
     for j in range(len(w)):
+        # if w[j] in negatives and repetitions[j] == 1:   # TODO: This and the next line are unnecessary.
+        #     negatives_fitness_ranks.append(j)
         if w[j] in negatives:
-            negatives_fitness_ranks.append(j)
+            for rep in range(repetitions[j]):
+                negatives_fitness_ranks.append(j)
     return negatives_fitness_ranks[i]
 
 
 # Returns true if fitness ranks w imply positive epistasis.
-def epistasis_positive(w, positives, negatives):
+def epistasis_positive(w, positives, negatives, repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
     if len(positives) != len(negatives):
         print "The number of positives and negatives are different!"
     for i in range(len(positives)):
-        if not epi_positives_get(i, w, positives) >= epi_negatives_get(i, w, negatives):
+        if not epi_positives_get(i, w, positives, repetitions) >= epi_negatives_get(i, w, negatives, repetitions):
             return False
     return True
 
 
 # Returns true if fitness ranks w imply negative epistasis.
-def epistasis_negative(w, positives, negatives):
+def epistasis_negative(w, positives, negatives, repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
     if len(positives) != len(negatives):
         print "The number of positives and negatives are different!"
     for i in range(len(negatives)):
-        if not epi_positives_get(i, w, positives) <= epi_negatives_get(i, w, negatives):
+        if not epi_positives_get(i, w, positives, repetitions) <= epi_negatives_get(i, w, negatives, repetitions):
             return False
     return True
 
 
 # Returns true if fitness ranks w imply epistasis.
-def epistasis(w, positives, negatives):
-    if epistasis_positive(w, positives, negatives) or epistasis_negative(w, positives, negatives):
+def epistasis(w, positives, negatives, repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
+    if epistasis_positive(w, positives, negatives, repetitions)\
+            or epistasis_negative(w, positives, negatives, repetitions):
         return True
     else:
         return False
 
 
-def list_epistasis(positives, negatives, circuit_name):
+def list_epistasis(positives, negatives, circuit_name, repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
     epi_ranks_file = open("./outputs/circuit_%s_orders.txt" % circuit_name, "w")
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
     fitness = [1, 2, 3, 4, 5, 6, 7, 8]
     number = 0
-    if epistasis(fitness, positives, negatives):
+    if epistasis(fitness, positives, negatives, repetitions):
         number += 1
         epi_ranks_file.write(str(fitness) + "\n")
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
         fitness = ordering_to_fitness(ordering)
-        if epistasis(fitness, positives, negatives):
+        if epistasis(fitness, positives, negatives, repetitions):
             number += 1
             epi_ranks_file.write(str(fitness) + "\n")
     epi_ranks_file.close()
