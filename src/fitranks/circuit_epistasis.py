@@ -86,9 +86,6 @@ def testing():
         list_epistasis(positives_list[shape_number], negatives_list[shape_number], shape_name, rep)
 
 
-testing()
-
-
 # Generates a file with shared orders:
 def shared_orders(file1, file2):
     ranks1 = open("./outputs/circuit_%s_orders.txt" % file1, "r")
@@ -106,3 +103,4 @@ def shared_orders(file1, file2):
     ranks1.close()
     ranks2.close()
     shared_file.close()
+
