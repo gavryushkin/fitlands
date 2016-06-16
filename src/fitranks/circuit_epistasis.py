@@ -1,4 +1,4 @@
-from three_way_epistasis import list_epistasis, epistasis
+from three_way_epistasis import list_epistasis, get_next_ordering, ordering_to_fitness
 
 
 __author__ = "@gavruskin"
@@ -104,3 +104,26 @@ def shared_orders(file1, file2):
     ranks2.close()
     shared_file.close()
 
+
+# Circuits to orders
+def circuits_to_orders():
+    circuits_to_orders_file = open("./outputs/circuits_to_orders.txt", "w")
+    ordering = [1, 1, 1, 1, 1, 1, 1, 1]
+    fitness = [1, 2, 3, 4, 5, 6, 7, 8]
+    line = str(fitness) + "\n"
+    circuits_to_orders_file.write("\n" + line)
+    for circuit in range(1, 21):
+        if line in open("./outputs/circuit_%s_orders.txt" % circuit, "r"):
+            circuits_to_orders_file.write(str(circuit))
+    while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
+        ordering = get_next_ordering(ordering)
+        fitness = ordering_to_fitness(ordering)
+        line = str(fitness) + "\n"
+        circuits_to_orders_file.write("\n" + line)
+        for circuit in range(1, 21):
+            if line in open("./outputs/circuit_%s_orders.txt" % circuit, "r"):
+                circuits_to_orders_file.write(str(circuit))
+    circuits_to_orders_file.close()
+
+
+circuits_to_orders()
