@@ -79,7 +79,7 @@ def strict_epistasis_for_graph(graph):
 
 def strict_epistasis():
     output = []
-    ranks_file = open("./ranks.txt", "r")
+    ranks_file = open("./outputs/ranks.txt", "r")
     graphs = set()
     unique_graphs = []
     for line in ranks_file:

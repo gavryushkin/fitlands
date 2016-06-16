@@ -29,15 +29,15 @@ def ranks_to_graph(w):
 
 
 def graph_from_ranks_to_file():
-    if not os.path.isfile("./ranks.txt"):
-        print "Please create file ranks.txt in the working directory."
+    if not os.path.isfile("./outputs/ranks.txt"):
+        print "Please create file 'ranks.txt' in directory 'outputs' inside the working directory."
         return
-    if not os.path.isfile("./fitness_graph.txt"):
-        graph_file = open("./fitness_graph.txt", "w")
+    if not os.path.isfile("./outputs/fitness_graph.txt"):
+        graph_file = open("./outputs/fitness_graph.txt", "w")
     else:
         print "File fitness_graph.txt is not empty."
         return
-    ranks_file = open("./ranks.txt", "r")
+    ranks_file = open("./outputs/ranks.txt", "r")
     for line in ranks_file:
         line = line.replace("[", "")
         line = line.replace("]", "")
@@ -49,9 +49,9 @@ def graph_from_ranks_to_file():
 
 
 def number_of_different_graphs():
-    graphs_file = open("./fitness_graph.txt", "r")
+    graphs_file = open("./outputs/fitness_graph.txt", "r")
     graphs_seen = set()
-    outfile = open("./fitness_graph_unique.txt", "w")
+    outfile = open("./outputs/fitness_graph_unique.txt", "w")
     number_of_unique = 0
     for line in graphs_file:
         if line not in graphs_seen:
