@@ -36,7 +36,7 @@ def epi_positives_get(i, w, positives, repetitions):
     positives_fitness_ranks = []
     for j in range(len(w)):
         if w[j] in positives:
-            for rep in range(repetitions[j]):
+            for rep in range(repetitions[w[j] - 1]):
                 positives_fitness_ranks.append(j)
     return positives_fitness_ranks[i]
 
@@ -46,16 +46,14 @@ def epi_negatives_get(i, w, negatives, repetitions):
     negatives_fitness_ranks = []
     for j in range(len(w)):
         if w[j] in negatives:
-            for rep in range(repetitions[j]):
+            for rep in range(repetitions[w[j] - 1]):
                 negatives_fitness_ranks.append(j)
     return negatives_fitness_ranks[i]
 
 
 # Returns true if fitness ranks w imply positive epistasis.
 def epistasis_positive(w, positives, negatives, repetitions):
-    # if len(positives) != len(negatives):
-        # print "The number of positives and negatives are different!"
-    for i in range(len(positives)):
+    for i in range(len(positives)):  # TODO: should be max of lengths
         if not epi_positives_get(i, w, positives, repetitions) >= epi_negatives_get(i, w, negatives, repetitions):
             return False
     return True
@@ -63,9 +61,7 @@ def epistasis_positive(w, positives, negatives, repetitions):
 
 # Returns true if fitness ranks w imply negative epistasis.
 def epistasis_negative(w, positives, negatives, repetitions):
-    # if len(positives) != len(negatives):
-    #     print "The number of positives and negatives are different!"
-    for i in range(len(negatives)):
+    for i in range(len(positives)):  # TODO: should be max of lengths
         if not epi_positives_get(i, w, positives, repetitions) <= epi_negatives_get(i, w, negatives, repetitions):
             return False
     return True
