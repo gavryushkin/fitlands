@@ -92,7 +92,7 @@ def list_epistasis(positives, negatives, circuit_name):
             number += 1
             epi_ranks_file.write(str(fitness) + "\n")
     epi_ranks_file.close()
-    print "The total number of circuit %s epistases is " %circuit_name + str(number) + \
+    print "The total number of circuit %s epistases is " % circuit_name + str(number) + \
           ". Their complete list has been written to circuit_%s_orders.txt" % circuit_name
 
 
