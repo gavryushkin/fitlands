@@ -1,9 +1,0 @@
-Please compile cubes.c with FILTER as a defined macro, as in 
-
-gcc ... -DFILTER -o a.out
-
-Otherwise, you will get the wrong graphs.  The executable from cubes.c makes
-twenty files of the form mats*.  These are just text files containing the
-matrix representations of the desired graphs.  Then run makecubes.R to produce
-the pictures which have the form cubes*.ps.  The R package 'diagram' is
-required to make the pictures.
