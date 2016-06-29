@@ -1,0 +1,5 @@
+Compile 'cubes.c' with the macro 'FILTER' defined, as in 
+
+gcc ... -DFILTER cubes -o <outputfile>
+
+The executable produces several plain text files of the matrices defining the graphs.  Use 'makecubes.R' to actually make the pictures.
