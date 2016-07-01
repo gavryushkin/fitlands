@@ -5,9 +5,6 @@ import os.path
 __author__ = '@gavruskin'
 
 
-N = 100000  # Number of iteration for the random algorithm.
-
-
 def get_next_ordering(x):
     y = x
     for i in range(len(x)):
@@ -76,6 +73,7 @@ def epistasis(w, positives, negatives, repetitions):
         return False
 
 
+# Generates a file with the list of all rankings that imply epistasis for the given circuit.
 # circuit name is the part of the file name as below.
 def list_epistasis(positives, negatives, circuit_name, repetitions):
     epi_ranks_file = open("./outputs/circuit_%s_orders.txt" % circuit_name, "w")
@@ -96,6 +94,35 @@ def list_epistasis(positives, negatives, circuit_name, repetitions):
           ". Their complete list has been written to circuit_%s_orders.txt" % circuit_name
 
 
+# Generates a file with the list of all rankings (followed by the sign) that imply epistasis for the given circuit.
+# circuit name is the part of the file name as below.
+def list_epistasis_signed(positives, negatives, circuit_name, repetitions):
+    epi_ranks_file = open("./outputs/circuit_%s_orders_signed.txt" % circuit_name, "w")
+    ordering = [1, 1, 1, 1, 1, 1, 1, 1]
+    fitness = [1, 2, 3, 4, 5, 6, 7, 8]
+    number_positive = 0
+    number_negative = 0
+    if epistasis_positive(fitness, positives, negatives, repetitions):
+        number_positive += 1
+        epi_ranks_file.write(str(fitness) + " +" + "\n")
+    elif epistasis_negative(fitness, positives, negatives, repetitions):
+        number_negative += 1
+        epi_ranks_file.write(str(fitness) + " -" + "\n")
+    while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
+        ordering = get_next_ordering(ordering)
+        fitness = ordering_to_fitness(ordering)
+        if epistasis_positive(fitness, positives, negatives, repetitions):
+            number_positive += 1
+            epi_ranks_file.write(str(fitness) + " +" + "\n")
+        elif epistasis_negative(fitness, positives, negatives, repetitions):
+            number_negative += 1
+            epi_ranks_file.write(str(fitness) + " -" + "\n")
+    epi_ranks_file.close()
+    print "The total number of circuit %s positive epistases is " % circuit_name + str(number_positive) + "."
+    print "The total number of circuit %s negative epistases is " % circuit_name + str(number_negative) + "."
+    print "Their complete list has been written to circuit_%s_orders.txt" % circuit_name
+
+
 def get_random_fitness_values():
     z = []
     for i in range(8):
@@ -105,9 +132,11 @@ def get_random_fitness_values():
 
 # IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6, w_110 = w_7, w_111 = w_8
 def write_epistasis_to_file_random_algorithm():
-    if not os.path.isfile("./epistasis_with_%s_cheks.txt" % N):
-        epistasis_file = open("epistasis_with_%s_cheks.txt" % N, "w")
-        epistasis_file.write("IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6, w_110 = w_7, w_111 = w_8\n")
+    iterations = 100000  # Number of iteration for the random algorithm.
+    if not os.path.isfile("./epistasis_with_%s_checks.txt" % iterations):
+        epistasis_file = open("epistasis_with_%s_checks.txt" % iterations, "w")
+        epistasis_file.write("IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6,"
+                             "w_110 = w_7, w_111 = w_8\n")
     else:
         print "File epistasis.txt is not empty"
         return
@@ -115,7 +144,7 @@ def write_epistasis_to_file_random_algorithm():
     fitness = [1, 2, 3, 4, 5, 6, 7, 8]
     fitness_values1 = get_random_fitness_values()
     i = 0
-    while i < N:
+    while i < iterations:
         fitness_values = get_random_fitness_values()
         epistasis1 = fitness_values1[fitness.index(1)] + fitness_values1[fitness.index(5)] + fitness_values1[fitness.index(6)] + fitness_values1[fitness.index(7)] - fitness_values1[fitness.index(2)] - fitness_values1[fitness.index(3)] - fitness_values1[fitness.index(4)] - fitness_values1[fitness.index(8)]
         epistasis = fitness_values[fitness.index(1)] + fitness_values[fitness.index(5)] + fitness_values[fitness.index(6)] + fitness_values[fitness.index(7)] - fitness_values[fitness.index(2)] - fitness_values[fitness.index(3)] - fitness_values[fitness.index(4)] - fitness_values[fitness.index(8)]
@@ -127,13 +156,8 @@ def write_epistasis_to_file_random_algorithm():
             fitness = ordering_to_fitness(ordering)
             i = 0
         i += 1
-        if i >= N:
+        if i >= iterations:
             epistasis_file.write(str(fitness) + "\n")
-            # DEBUG:
-            print "This one!! :"
-            print ordering
-            print fitness
-            # DEBUG^
             if ordering == [8, 7, 6, 5, 4, 3, 2, 1]:
                 epistasis_file.close()
                 return

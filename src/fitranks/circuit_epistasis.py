@@ -1,10 +1,11 @@
-from three_way_epistasis import list_epistasis, get_next_ordering, ordering_to_fitness
+from three_way_epistasis import list_epistasis, list_epistasis_signed, get_next_ordering, ordering_to_fitness
 
 
 __author__ = "@gavruskin"
 
 
-def testing():
+# For every circuit, generates a file that contains orders that imply epistasis.
+def orders_to_circuits():
     positives_list = [{1, 7},           # 1
                       {2, 8},           # 2
                       {1, 6},           # 3
@@ -84,6 +85,7 @@ def testing():
         else:
             rep = [1, 1, 1, 1, 1, 1, 1, 1]
         list_epistasis(positives_list[shape_number], negatives_list[shape_number], shape_name, rep)
+        list_epistasis_signed(positives_list[shape_number], negatives_list[shape_number], shape_name, rep)
 
 
 # Generates a file with shared orders:
@@ -105,13 +107,14 @@ def shared_orders(file1, file2):
     shared_file.close()
 
 
-# Circuits to orders
+# Generates a big file with the list of all rankings.
+# A ranking is followed by a list of circuits that imply epistasis.
 def circuits_to_orders():
     circuits_to_orders_file = open("./outputs/circuits_to_orders.txt", "w")
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
     fitness = [1, 2, 3, 4, 5, 6, 7, 8]
     line = str(fitness) + "\n"
-    circuits_to_orders_file.write("\n" + line)
+    circuits_to_orders_file.write(line)
     for circuit in range(1, 21):
         if line in open("./outputs/circuit_%s_orders.txt" % circuit, "r"):
             circuits_to_orders_file.write(str(circuit))
@@ -122,8 +125,28 @@ def circuits_to_orders():
         circuits_to_orders_file.write("\n" + line)
         for circuit in range(1, 21):
             if line in open("./outputs/circuit_%s_orders.txt" % circuit, "r"):
-                circuits_to_orders_file.write(str(circuit))
+                circuits_to_orders_file.write(str(circuit) + " ")
     circuits_to_orders_file.close()
 
 
-circuits_to_orders()
+# Generates a big file with the list of all rankings.
+# A ranking is followed by a list of circuits with signs that imply epistasis.
+# TODO: finish this
+def circuits_to_orders_signed():
+    circuits_to_orders_file = open("./outputs/circuits_to_orders_signed.txt", "w")
+    ordering = [1, 1, 1, 1, 1, 1, 1, 1]
+    fitness = [1, 2, 3, 4, 5, 6, 7, 8]
+    line = str(fitness) + "\n"
+    circuits_to_orders_file.write(line)
+    for circuit in range(1, 21):
+        if line in open("./outputs/circuit_%s_orders.txt" % circuit, "r"):
+            circuits_to_orders_file.write(str(circuit))
+    while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
+        ordering = get_next_ordering(ordering)
+        fitness = ordering_to_fitness(ordering)
+        line = str(fitness) + "\n"
+        circuits_to_orders_file.write("\n" + line)
+        for circuit in range(1, 21):
+            if line in open("./outputs/circuit_%s_orders.txt" % circuit, "r"):
+                circuits_to_orders_file.write(str(circuit) + " ")
+    circuits_to_orders_file.close()
