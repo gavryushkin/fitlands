@@ -131,22 +131,29 @@ def circuits_to_orders():
 
 # Generates a big file with the list of all rankings.
 # A ranking is followed by a list of circuits with signs that imply epistasis.
-# TODO: finish this
 def circuits_to_orders_signed():
     circuits_to_orders_file = open("./outputs/circuits_to_orders_signed.txt", "w")
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
     fitness = [1, 2, 3, 4, 5, 6, 7, 8]
     line = str(fitness) + "\n"
+    line_positive = str(fitness) + " +" + "\n"
+    line_negative = str(fitness) + " -" + "\n"
     circuits_to_orders_file.write(line)
     for circuit in range(1, 21):
-        if line in open("./outputs/circuit_%s_orders.txt" % circuit, "r"):
-            circuits_to_orders_file.write(str(circuit))
+        if line_positive in open("./outputs/circuit_%s_orders_signed.txt" % circuit, "r"):
+            circuits_to_orders_file.write("+" + str(circuit) + " ")
+        elif line_negative in open("./outputs/circuit_%s_orders_signed.txt" % circuit, "r"):
+            circuits_to_orders_file.write("-" + str(circuit) + " ")
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
         fitness = ordering_to_fitness(ordering)
         line = str(fitness) + "\n"
+        line_positive = str(fitness) + " +" + "\n"
+        line_negative = str(fitness) + " -" + "\n"
         circuits_to_orders_file.write("\n" + line)
         for circuit in range(1, 21):
-            if line in open("./outputs/circuit_%s_orders.txt" % circuit, "r"):
-                circuits_to_orders_file.write(str(circuit) + " ")
+            if line_positive in open("./outputs/circuit_%s_orders_signed.txt" % circuit, "r"):
+                circuits_to_orders_file.write("+" + str(circuit) + " ")
+            elif line_negative in open("./outputs/circuit_%s_orders_signed.txt" % circuit, "r"):
+                circuits_to_orders_file.write("-" + str(circuit) + " ")
     circuits_to_orders_file.close()
