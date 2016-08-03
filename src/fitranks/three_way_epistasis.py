@@ -123,6 +123,24 @@ def list_epistasis_signed(positives, negatives, circuit_name, repetitions):
     print "Their complete list has been written to circuit_%s_orders.txt" % circuit_name
 
 
+# Returns a pair of truth values for positive and (then) negative epistasis
+# derived from ranks induces by fitness vector v.
+# For three way epistasis: positives = {1, 5, 6, 7}, negatives = {4, 3, 2, 8}, repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
+# w_000 = w[1], w_001 = w[2], w_010 = w[3], w_100 = w[4], w_011 = w[5], w_101 = w[6], w_110 = w[7], w_111 = w[8]
+def check_for_epistasis(v):
+    positives = {1, 5, 6, 7}
+    negatives = {4, 3, 2, 8}
+    repetitions = [1, 1, 1, 1, 1, 1, 1, 1]  # TODO: Possibly make these default values.
+    v_sorted = sorted(v)
+    w = []
+    for i in range(len(v)):
+        w.append(v.index(v_sorted[i]) + 1)
+    epi_pos = epistasis_positive(w, positives, negatives, repetitions)
+    epi_neg = epistasis_negative(w, positives, negatives, repetitions)
+    output = [epi_pos, epi_neg]
+    return output
+
+
 def get_random_fitness_values():
     z = []
     for i in range(8):
