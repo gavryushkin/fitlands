@@ -157,3 +157,8 @@ def circuits_to_orders_signed():
             elif line_negative in open("./outputs/circuit_%s_orders_signed.txt" % circuit, "r"):
                 circuits_to_orders_file.write("-" + str(circuit) + " ")
     circuits_to_orders_file.close()
+
+
+# To generate the big file, call:
+# orders_to_circuits()
+# circuits_to_orders_signed()
