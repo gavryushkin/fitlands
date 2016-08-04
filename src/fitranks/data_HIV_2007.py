@@ -62,3 +62,15 @@ HIV_data_file = "2007_HIV_data.csv"
 HIV_sites = [88, 244, 275]  # sites: PRO L90M, RT M184V, RT T215Y
 mean_my = get_mean_fitness(HIV_data_file, HIV_sites)
 check_for_epistasis(mean_my, True)
+
+epi_count = 0
+for k in range(4, 281):
+    for j in range(3, k):
+        for i in range(2, j):
+            running_sites = [i, j, k]
+            running_mean = get_mean_fitness(HIV_data_file, running_sites)
+            epi = check_for_epistasis(running_mean)
+            if epi[0] or epi[1]:
+                epi_count += 1
+                print epi_count
+                print running_sites
