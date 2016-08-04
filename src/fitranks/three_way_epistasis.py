@@ -1,5 +1,6 @@
 import random
 import os.path
+import numpy
 
 
 __author__ = '@gavruskin'
@@ -140,8 +141,8 @@ def check_for_epistasis(v, details=False):
     output = [epi_pos, epi_neg]
     if details:
         epi = epi_neg or epi_pos
-        print v
-        print v_sorted
+        print numpy.round(v, 3)
+        print numpy.round(v_sorted, 3)
         print w
         print epi
     print output
