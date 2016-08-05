@@ -15,7 +15,7 @@ mean = [1.5800, 1.1950, 1.1330, 1.4410, 1.4300, 1.2320, 1.2940, 1.0450]
 qu3 = [1.7910, 1.7710, 1.4870, 1.7890, 1.6360, 1.5840, 1.5370, 1.3850]
 maxim = [2.0530, 1.7850, 1.5310, 1.8750, 1.7240, 1.8870, 1.6920, 1.7900]
 
-check_for_epistasis(minim)
+check_for_epistasis(minim, True)
 check_for_epistasis(qu1)
 check_for_epistasis(median)
 check_for_epistasis(mean)
@@ -26,33 +26,51 @@ check_for_epistasis(maxim)
 def get_mean_fitness(data_file, sites, mean_type="mean"):
     sites = [0] + sites
     values = pandas.read_csv(data_file, usecols=sites)
+    genotype_names = pandas.read_csv(data_file, usecols=[1])
     values.iloc[:, 0] = numpy.log10(values.iloc[:, 0])
     size = len(values.iloc[:,1])
     f000 = []
+    f000_name = []  # TODO: This is to keep track of where the sample is coming from, and can be omitted for efficiency.
     f001 = []
+    f001_name = []
     f010 = []
+    f010_name = []
     f100 = []
+    f100_name = []
     f011 = []
+    f011_name = []
     f101 = []
+    f101_name = []
     f110 = []
+    f110_name = []
     f111 = []
+    f111_name = []
+    w = []
     for s in range(size):
         if (values.iloc[s, 1] == "L") & (values.iloc[s, 2] == "M") & (values.iloc[s, 3] == "t"):
             f000.append(values.iloc[s, 0])
+            f000_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == "L") & (values.iloc[s, 2] == "M") & (values.iloc[s, 3] == "Y"):
             f001.append(values.iloc[s, 0])
+            f001_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == "L") & (values.iloc[s, 2] == "V") & (values.iloc[s, 3] == "t"):
             f010.append(values.iloc[s, 0])
+            f010_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == "M") & (values.iloc[s, 2] == "M") & (values.iloc[s, 3] == "t"):
             f100.append(values.iloc[s, 0])
+            f100_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == "L") & (values.iloc[s, 2] == "V") & (values.iloc[s, 3] == "Y"):
             f011.append(values.iloc[s, 0])
+            f011_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == "M") & (values.iloc[s, 2] == "M") & (values.iloc[s, 3] == "Y"):
             f101.append(values.iloc[s, 0])
+            f101_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == "M") & (values.iloc[s, 2] == "V") & (values.iloc[s, 3] == "t"):
             f110.append(values.iloc[s, 0])
+            f110_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == "M") & (values.iloc[s, 2] == "V") & (values.iloc[s, 3] == "Y"):
             f111.append(values.iloc[s, 0])
+            f111_name.append(genotype_names.iloc[s, 0])
     if mean_type == "mean":
         w = [numpy.mean(f000), numpy.mean(f001), numpy.mean(f010), numpy.mean(f100), numpy.mean(f011), numpy.mean(f101),
              numpy.mean(f110), numpy.mean(f111)]
@@ -73,6 +91,22 @@ def get_mean_fitness(data_file, sites, mean_type="mean"):
         w = [numpy.percentile(f000, 75), numpy.percentile(f001, 75), numpy.percentile(f010, 75),
              numpy.percentile(f100, 75), numpy.percentile(f011, 75), numpy.percentile(f101, 75),
              numpy.percentile(f110, 75), numpy.percentile(f111, 75)]
+    print "Count for 000: " + str(len(f000))
+    print "000 names: " + str(f000_name)
+    print "Count for 001: " + str(len(f001))
+    print "001 names: " + str(f001_name)
+    print "Count for 010: " + str(len(f010))
+    print "010 names: " + str(f010_name)
+    print "Count for 100: " + str(len(f100))
+    print "100 names: " + str(f100_name)
+    print "Count for 011: " + str(len(f011))
+    print "011 names: " + str(f011_name)
+    print "Count for 101: " + str(len(f101))
+    print "101 names: " + str(f101_name)
+    print "Count for 110: " + str(len(f110))
+    print "110 names: " + str(f110_name)
+    print "Count for 111: " + str(len(f111))
+    print "111 names: " + str(f111_name)
     return w
 
 
