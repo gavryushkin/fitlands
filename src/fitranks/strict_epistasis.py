@@ -2,7 +2,7 @@ from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasi
 from ranks_to_graph import ranks_to_graph
 
 
-__author__="@gavruskin"
+__author__ = "@gavruskin"
 
 
 # Nodes are the fitness graph as a linked list.
