@@ -15,11 +15,11 @@ mean = [1.5800, 1.1950, 1.1330, 1.4410, 1.4300, 1.2320, 1.2940, 1.0450]
 qu3 = [1.7910, 1.7710, 1.4870, 1.7890, 1.6360, 1.5840, 1.5370, 1.3850]
 maxim = [2.0530, 1.7850, 1.5310, 1.8750, 1.7240, 1.8870, 1.6920, 1.7900]
 
-check_for_epistasis(minim, True)
+check_for_epistasis(minim)
 check_for_epistasis(qu1)
 check_for_epistasis(median)
 check_for_epistasis(mean)
-check_for_epistasis(qu3)
+check_for_epistasis(qu3, True)
 check_for_epistasis(maxim)
 
 
@@ -62,20 +62,23 @@ def get_mean_fitness(data_file, sites, mean_type="mean"):
     elif mean_type == "min":
         w = [numpy.min(f000), numpy.min(f001), numpy.min(f010), numpy.min(f100), numpy.min(f011), numpy.min(f101),
              numpy.min(f110), numpy.min(f111)]
-    print len(f000)
-    print len(f001)
-    print len(f010)
-    print len(f100)
-    print len(f011)
-    print len(f101)
-    print len(f110)
-    print len(f111)
+    elif mean_type == "median":
+        w = [numpy.median(f000), numpy.median(f001), numpy.median(f010), numpy.median(f100), numpy.median(f011),
+             numpy.median(f101), numpy.median(f110), numpy.median(f111)]
+    elif mean_type == "qu1":
+        w = [numpy.percentile(f000, 25), numpy.percentile(f001, 25), numpy.percentile(f010, 25),
+             numpy.percentile(f100, 25), numpy.percentile(f011, 25), numpy.percentile(f101, 25),
+             numpy.percentile(f110, 25), numpy.percentile(f111, 25)]
+    elif mean_type == "qu3":
+        w = [numpy.percentile(f000, 75), numpy.percentile(f001, 75), numpy.percentile(f010, 75),
+             numpy.percentile(f100, 75), numpy.percentile(f011, 75), numpy.percentile(f101, 75),
+             numpy.percentile(f110, 75), numpy.percentile(f111, 75)]
     return w
 
 
 HIV_data_file = "2007_HIV_data.csv"
 HIV_sites = [88, 244, 275]  # sites: PRO L90M, RT M184V, RT T215Y
-mean_my = get_mean_fitness(HIV_data_file, HIV_sites, "min")
+mean_my = get_mean_fitness(HIV_data_file, HIV_sites, "qu3")
 check_for_epistasis(mean_my, True)
 
 
