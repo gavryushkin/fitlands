@@ -147,6 +147,7 @@ def check_for_epistasis(v, details=False):
         print epi
         print output
         print
+        print output
     return output
 
 
