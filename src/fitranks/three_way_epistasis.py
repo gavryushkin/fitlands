@@ -145,7 +145,8 @@ def check_for_epistasis(v, details=False):
         print numpy.round(v_sorted, 3)
         print w
         print epi
-#   print output
+        print output
+        print
     return output
 
 
