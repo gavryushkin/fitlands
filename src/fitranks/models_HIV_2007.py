@@ -81,12 +81,12 @@ def epistasis_probability_from_comparisons(data_file, mutations, sites):
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
     fitness = [1, 2, 3, 4, 5, 6, 7, 8]
     if check_for_epistasis(fitness)[0]:
-        epistasis_probability = ranking_probability(fitness, data_file, mutations,sites)
+        epistasis_probability = ranking_probability(fitness, data_file, mutations, sites)
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
         fitness = ordering_to_fitness(ordering)
         if check_for_epistasis(fitness)[0]:
-            epistasis_probability *= ranking_probability(fitness, data_file, mutations,sites)
+            epistasis_probability *= ranking_probability(fitness, data_file, mutations, sites)
     return epistasis_probability
 
 
