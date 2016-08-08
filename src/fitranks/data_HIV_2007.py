@@ -18,7 +18,7 @@ maxim = [2.0530, 1.7850, 1.5310, 1.8750, 1.7240, 1.8870, 1.6920, 1.7900]
 check_for_epistasis(minim)
 check_for_epistasis(qu1)
 check_for_epistasis(median)
-check_for_epistasis(mean)
+check_for_epistasis(mean, True)
 check_for_epistasis(qu3)
 check_for_epistasis(maxim)
 
@@ -28,60 +28,43 @@ check_for_epistasis(minim)
 
 
 def get_mean_fitness(data_file, mutations, sites, mean_type=""):
-    sites = [0] + sites
+    sites = [0] + sites  # This is specific to the data file. Column 0 contains fitness, column 1 names.
     values = pandas.read_csv(data_file, usecols=sites)
-    genotype_names = pandas.read_csv(data_file, usecols=[1])
     values.iloc[:, 0] = numpy.log10(values.iloc[:, 0])
     size = len(values.iloc[:,1])
     f000 = []
-    f000_name = []  # TODO: This is to keep track of where the sample is coming from, and can be omitted for efficiency.
     f001 = []
-    f001_name = []
     f010 = []
-    f010_name = []
     f100 = []
-    f100_name = []
     f011 = []
-    f011_name = []
     f101 = []
-    f101_name = []
     f110 = []
-    f110_name = []
     f111 = []
-    f111_name = []
     for s in range(size):
         if (values.iloc[s, 1] == mutations[0][0]) & (values.iloc[s, 2] == mutations[1][0]) &\
                 (values.iloc[s, 3] == mutations[2][0]):
             f000.append(values.iloc[s, 0])
-            f000_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == mutations[0][0]) & (values.iloc[s, 2] == mutations[1][0]) &\
                 (values.iloc[s, 3] == mutations[2][1]):
             f001.append(values.iloc[s, 0])
-            f001_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == mutations[0][0]) & (values.iloc[s, 2] == mutations[1][1]) &\
                 (values.iloc[s, 3] == mutations[2][0]):
             f010.append(values.iloc[s, 0])
-            f010_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == mutations[0][1]) & (values.iloc[s, 2] == mutations[1][0]) &\
                 (values.iloc[s, 3] == mutations[2][0]):
             f100.append(values.iloc[s, 0])
-            f100_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == mutations[0][0]) & (values.iloc[s, 2] == mutations[1][1]) &\
                 (values.iloc[s, 3] == mutations[2][1]):
             f011.append(values.iloc[s, 0])
-            f011_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == mutations[0][1]) & (values.iloc[s, 2] == mutations[1][0]) &\
                 (values.iloc[s, 3] == mutations[2][1]):
             f101.append(values.iloc[s, 0])
-            f101_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == mutations[0][1]) & (values.iloc[s, 2] == mutations[1][1]) &\
                 (values.iloc[s, 3] == mutations[2][0]):
             f110.append(values.iloc[s, 0])
-            f110_name.append(genotype_names.iloc[s, 0])
         elif (values.iloc[s, 1] == mutations[0][1]) & (values.iloc[s, 2] == mutations[1][1]) &\
                 (values.iloc[s, 3] == mutations[2][1]):
             f111.append(values.iloc[s, 0])
-            f111_name.append(genotype_names.iloc[s, 0])
     if mean_type == "mean":
         w = [numpy.mean(f000), numpy.mean(f001), numpy.mean(f010), numpy.mean(f100), numpy.mean(f011), numpy.mean(f101),
              numpy.mean(f110), numpy.mean(f111)]
@@ -108,6 +91,8 @@ def get_mean_fitness(data_file, mutations, sites, mean_type=""):
              numpy.percentile(f100, 75), numpy.percentile(f011, 75), numpy.percentile(f101, 75),
              numpy.percentile(f110, 75), numpy.percentile(f111, 75)]
         return w
+
+    # TODO: Get rid of the following testing piece:
     # print "Count for 000: " + str(len(f000))
     # print "Count for 001: " + str(len(f001))
     # print "Count for 010: " + str(len(f010))
@@ -142,7 +127,7 @@ def get_mean_fitness(data_file, mutations, sites, mean_type=""):
                         for f5 in f101_sorted:
                             for f6 in f110_sorted:
                                 for f7 in f111_sorted:
-                                    if len({f0, f1, f2, f3, f4, f5, f6, f7}) == 8:
+                                    if len({f0, f1, f2, f3, f4, f5, f6, f7}) == 8:  # To skip missing data.
                                         w_list.append([f0, f1, f2, f3, f4, f5, f6, f7])
     return w_list
 
