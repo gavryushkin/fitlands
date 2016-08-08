@@ -6,7 +6,6 @@ __author__ = '@gavruskin'
 
 
 # Gives the probability P(sigma[0] < sigma[1]).
-# TODO: test this.
 def ranking_probability(sigma, data_file, mutations, sites):
     sites = [0] + [1] + sites  # This is specific to the data file. Column 0 contains fitness, column 1 names.
     values = pandas.read_csv(data_file, usecols=sites)
@@ -59,6 +58,7 @@ def ranking_probability(sigma, data_file, mutations, sites):
                     if f[sigma[i] - 1][r] < f[sigma[j] - 1][s]:
                         count += 1
             probability_i = count / float(len(f[sigma[i] - 1]))
+            # Multiply the running probability by p_{i, j}:
             output *= probability_i * probability_j
     return output
 
