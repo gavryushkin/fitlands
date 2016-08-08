@@ -1,6 +1,6 @@
 import pandas
 import numpy
-
+from three_way_epistasis import get_next_ordering, ordering_to_fitness
 
 __author__ = '@gavruskin'
 
@@ -71,4 +71,20 @@ mutations_BPS = [["L", "M"],  # mutations: L to M, M to V, t to Y
                  ["t", "Y"]]
 sites_BPS = [88, 244, 275]  # sites: PRO L90M, RT M184V, RT T215Y
 
-print ranking_probability(sigma_mean, HIV_data_file, mutations_BPS, sites_BPS)
+# print ranking_probability(sigma_mean, HIV_data_file, mutations_BPS, sites_BPS)
+
+
+# Comparison model (second in the paper):
+def epistasis_probability_from_comparisons(data_file, mutations, sites):
+    # Loop through all rankings (they called fitness in the code):
+    ordering = [1, 1, 1, 1, 1, 1, 1, 1]
+    fitness = [1, 2, 3, 4, 5, 6, 7, 8]
+    fitness_probability = ranking_probability(fitness, data_file, mutations,sites)
+    while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
+        ordering = get_next_ordering(ordering)
+        fitness = ordering_to_fitness(ordering)
+        fitness_probability *= ranking_probability(fitness, data_file, mutations,sites)
+    return fitness_probability
+
+
+print epistasis_probability_from_comparisons(HIV_data_file, mutations_BPS, sites_BPS)
