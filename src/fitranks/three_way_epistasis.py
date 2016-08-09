@@ -154,7 +154,7 @@ def check_for_epistasis(v, details=False):
 def ranks_to_values(fitness):
     output = [0, 0, 0, 0, 0, 0, 0, 0]
     for i in range(len(fitness)):
-        output[fitness[i]] = i + 1
+        output[fitness[i] - 1] = i + 1
     return output
 
 
