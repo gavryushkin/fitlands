@@ -50,7 +50,7 @@ def dist_to_negative_epi(w, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8}):
             count += 1
             count_values.append(count)
         else:
-            print "Your w has an unsigned entry in dist_to_positive_epi."
+            print "Your w has an unsigned entry in dist_to_positive_epi"
             return
     output = numpy.min(count_values)
     return output

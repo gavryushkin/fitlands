@@ -147,7 +147,14 @@ def check_for_epistasis(v, details=False):
         print epi
         print output
         print
-        print output
+    return output
+
+
+# Given a ranking as in the comment above, returns a tuple of fitness values that induce that ranking.
+def ranks_to_values(fitness):
+    output = [0, 0, 0, 0, 0, 0, 0, 0]
+    for i in range(len(fitness)):
+        output[fitness[i]] = i + 1
     return output
 
 

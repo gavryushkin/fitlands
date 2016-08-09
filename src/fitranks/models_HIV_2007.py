@@ -1,11 +1,12 @@
 import pandas
 import numpy
-from three_way_epistasis import get_next_ordering, ordering_to_fitness, check_for_epistasis
+from three_way_epistasis import get_next_ordering, ordering_to_fitness, check_for_epistasis, epistasis_positive, ranks_to_values
+import datetime
 
 __author__ = '@gavruskin'
 
 
-# Gives the probability P(sigma[0] < sigma[1]).
+# Gives the probability P(sigma[0] < ... < sigma[7]).
 def ranking_probability(sigma, data_file, mutations, sites):
     sites = [0] + [1] + sites  # This is specific to the data file. Column 0 contains fitness, column 1 names.
     values = pandas.read_csv(data_file, usecols=sites)
@@ -45,21 +46,20 @@ def ranking_probability(sigma, data_file, mutations, sites):
                 (values.iloc[s, 4] == mutations[2][1]):
             f111.append(values.iloc[s, 0])
     f = [f000, f001, f010, f100, f011, f101, f110, f111]
-    # Now use that P(sigma) = \Pi_{sigma[i] < sigma[j]} p_{i,j}, that is we multiply all such p_{i,j}.
+    # Now use that P(sigma) = \Pi_{sigma[j-1] < sigma[j]} p_{j-1, j}, that is, we multiply all such p_{j-1,j}.
     # For that, use P(W_i < W_j) = \sum_x P(W_j = x) * P(W_i < x):
     output = 1
-    for j in range(len(sigma)):
-        for i in range(j):
+    for j in range(1, len(sigma)):  # \Pi__j
             probability_j = 1 / float(len(f[sigma[j] - 1]))  # This is P(W_j = x), which does not depend on x.
             # Now find probability_i = \sum_x P(W_i < x):
             count = 0
             for s in range(len(f[sigma[j] - 1])):
-                for r in range(len(f[sigma[i] - 1])):
-                    if f[sigma[i] - 1][r] < f[sigma[j] - 1][s]:
+                for r in range(len(f[sigma[j-1] - 1])):
+                    if f[sigma[j-1] - 1][r] < f[sigma[j] - 1][s]:
                         count += 1
-            probability_i = count / float(len(f[sigma[i] - 1]))
+            probability_i = count / float(len(f[sigma[j-1] - 1]))
             # Multiply the running probability by p_{i, j}:
-            output *= probability_i * probability_j
+            output *= probability_j * probability_i
     return output
 
 
@@ -76,18 +76,48 @@ sites_BPS = [88, 244, 275]  # sites: PRO L90M, RT M184V, RT T215Y
 
 # Comparison model (second in the paper):
 def epistasis_probability_from_comparisons(data_file, mutations, sites):
-    epistasis_probability = 1
+    epistasis_probability = 0
     # Loop through all rankings (they called fitness in the code):
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
     fitness = [1, 2, 3, 4, 5, 6, 7, 8]
-    if check_for_epistasis(fitness)[0]:
+    positives = {1, 5, 6, 7}
+    negatives = {4, 3, 2, 8}
+    repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
+    if epistasis_positive(fitness, positives, negatives, repetitions):
         epistasis_probability = ranking_probability(fitness, data_file, mutations, sites)
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
         fitness = ordering_to_fitness(ordering)
-        if check_for_epistasis(fitness)[0]:
-            epistasis_probability *= ranking_probability(fitness, data_file, mutations, sites)
+        if epistasis_positive(fitness, positives, negatives, repetitions):
+            epistasis_probability += ranking_probability(fitness, data_file, mutations, sites)
     return epistasis_probability
 
 
+# Does the same thing as above but uses the file with precomputed rankings that imply epistasis.
+def epistasis_probability_from_comparisons_fast(data_file, mutations, sites):
+    with open("outputs/circuit_u_111_orders_signed.txt") as epistasis_rankings_file:
+        epistasis_probability = 0
+        for signed_ranking in epistasis_rankings_file:
+            if signed_ranking.endswith("+\n"):
+                signed_ranking = signed_ranking.replace("[", "")
+                signed_ranking = signed_ranking.replace("]", "")
+                signed_ranking = signed_ranking.replace("+\n", "")
+                fitness_ranking = [int(s) for s in signed_ranking.split(", ")]
+                fitness = ranks_to_values(fitness_ranking)
+                if check_for_epistasis(fitness):
+                    prob = ranking_probability(fitness, data_file, mutations, sites)
+                    epistasis_probability += prob
+    epistasis_rankings_file.close()
+    return epistasis_probability
+
+print "Starting fast method at:"
+print datetime.datetime.now()
+print epistasis_probability_from_comparisons_fast(HIV_data_file, mutations_BPS, sites_BPS)
+print "Finishing fast method at:"
+print datetime.datetime.now()
+print
+print "Starting slow method at:"
+print datetime.datetime.now()
 print epistasis_probability_from_comparisons(HIV_data_file, mutations_BPS, sites_BPS)
+print "Finishing slow method at:"
+print datetime.datetime.now()
