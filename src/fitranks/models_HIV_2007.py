@@ -1,6 +1,6 @@
 import pandas
 import numpy
-from three_way_epistasis import get_next_ordering, ordering_to_fitness, check_for_epistasis, epistasis_positive, ranks_to_values
+from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive
 import datetime
 
 __author__ = '@gavruskin'
@@ -12,7 +12,7 @@ def ranking_probability(sigma, fit_data_list):
     # For that, use P(W_i < W_j) = \sum_x P(W_j = x) * P(W_i < x):
     output = 1
     for j in range(1, len(sigma)):  # \Pi__j
-            probability_j = 1 / float(len(fit_data_list[sigma[j] - 1]))  # This is P(W_j = x), which does not depend on x.
+            probability_j = 1 / float(len(fit_data_list[sigma[j] - 1]))  # That's P(W_j = x), which doesn't depend on x.
             # Now find probability_i = \sum_x P(W_i < x):
             count = 0
             for s in range(len(fit_data_list[sigma[j] - 1])):
@@ -26,7 +26,7 @@ def ranking_probability(sigma, fit_data_list):
 
 
 # Comparison model (second in the paper):
-def epistasis_probability_from_comparisons(fit_data_list):
+def epistasis_probability_from_comparisons(fit_data_list, cutoff_prob):
     epistasis_probability = 0
     # Loop through all rankings (they called fitness in the code):
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
@@ -48,21 +48,21 @@ def epistasis_probability_from_comparisons(fit_data_list):
 # Faster by about 2 seconds on the data used for testing (from [BPS2007]).
 def epistasis_probability_from_comparisons_fast(fit_data_list):
     with open("outputs/circuit_u_111_orders_signed.txt") as epistasis_rankings_file:
-        epistasis_probability = 0
-        prob_max = 0  # TODO: rm all occurrences of prob_max
+        epistasis_probability = []
+        ranking = []
         for signed_ranking in epistasis_rankings_file:
-            if signed_ranking.endswith("+\n"):
-                signed_ranking = signed_ranking.replace("[", "")
-                signed_ranking = signed_ranking.replace("]", "")
-                signed_ranking = signed_ranking.replace("+\n", "")
-                fitness = [int(r) for r in signed_ranking.split(", ")]
+            # if signed_ranking.endswith("+\n"):
+                signed_ranking_clean = signed_ranking.replace("[", "")
+                signed_ranking_clean = signed_ranking_clean.replace("]", "")
+                signed_ranking_clean = signed_ranking_clean.replace("+\n", "")
+                signed_ranking_clean = signed_ranking_clean.replace("-\n", "")
+                fitness = [int(r) for r in signed_ranking_clean.split(", ")]
                 prob = ranking_probability(fitness, fit_data_list)
-                epistasis_probability += prob
-                if prob > prob_max:
-                    prob_max = prob
+                if prob > 0.013:
+                    epistasis_probability.append(prob)
+                    ranking.append(signed_ranking)
     epistasis_rankings_file.close()
-    print "Max prob: " + str(prob_max)
-    return epistasis_probability
+    return [epistasis_probability, ranking]
 
 
 sigma_mean = [8, 3, 2, 6, 7, 5, 4, 1]
@@ -112,10 +112,19 @@ for s in range(size):
         f111.append(values.iloc[s, 0])
 f = [f000, f001, f010, f100, f011, f101, f110, f111]
 
-print "Starting fast method at:"
+print "Starting at:"
 print datetime.datetime.now()
 print
-print epistasis_probability_from_comparisons_fast(f)
+ret = epistasis_probability_from_comparisons_fast(f)
+# for i in range(len(ret[0])):
+#     print ret[0][i]
+#     print ret[1][i]
+print len(ret[0])
+count_neg = 0
+for i in range(len(ret[0])):
+    if ret[1][i].endswith("-\n"):
+        count_neg += 1
+print count_neg
 print
-print "Finishing fast method at:"
+print "Finishing at:"
 print datetime.datetime.now()
