@@ -1,6 +1,7 @@
 import pandas
 import numpy
-from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive
+from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative,\
+    check_for_epistasis
 import datetime
 
 __author__ = '@gavruskin'
@@ -25,7 +26,9 @@ def ranking_probability(sigma, fit_data_list):
     return output
 
 
-# Comparison model (second in the paper):
+# Comparison model (second in the paper).
+# Returns the triple t of counts of rankings with higher than cutoff_prob probability such that
+# t[0] imply positive epistasis, t[1] negative, t[2] the total number of such rankings.
 def epistasis_probability_from_comparisons(fit_data_list, cutoff_prob):
     epistasis_probability = 0
     # Loop through all rankings (they called fitness in the code):
@@ -34,19 +37,41 @@ def epistasis_probability_from_comparisons(fit_data_list, cutoff_prob):
     positives = {1, 5, 6, 7}
     negatives = {4, 3, 2, 8}
     repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
-    if epistasis_positive(fitness, positives, negatives, repetitions):
-        epistasis_probability = ranking_probability(fitness, fit_data_list)
+    prob = ranking_probability(fitness, fit_data_list)
+    positive_count = 0
+    negative_count = 0
+    total_count = 0
+    if prob > cutoff_prob:
+        if epistasis_positive(fitness, positives, negatives, repetitions):
+            positive_count += 1
+            total_count +=1
+        elif epistasis_negative(fitness, positives, negatives, repetitions):
+            negative_count += 1
+            total_count += 1
+        else:
+            total_count += 1
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
         fitness = ordering_to_fitness(ordering)
-        if epistasis_positive(fitness, positives, negatives, repetitions):
-            epistasis_probability += ranking_probability(fitness, fit_data_list)
-    return epistasis_probability
+        prob = ranking_probability(fitness, fit_data_list)
+        if prob > cutoff_prob:
+            if epistasis_positive(fitness, positives, negatives, repetitions):
+                positive_count += 1
+                total_count += 1
+            elif epistasis_negative(fitness, positives, negatives, repetitions):
+                negative_count += 1
+                total_count += 1
+            else:
+                total_count += 1
+    print "Number of positives: " + str(positive_count)
+    print "Number of negative: " + str(negative_count)
+    print "Total number: " + str(total_count)
+    return [positive_count, negative_count, total_count]
 
 
-# Does the same thing as above but uses the file with precomputed rankings that imply epistasis.
-# Faster by about 2 seconds on the data used for testing (from [BPS2007]).
-def epistasis_probability_from_comparisons_fast(fit_data_list):
+# Uses precomputed rankings that imply epistasis and returns those that have probability higher than cutoff_prob and
+# imply positive epistasis with their probabilities.
+def epistasis_probability_from_comparisons_fast(fit_data_list, cutoff_prob):
     with open("outputs/circuit_u_111_orders_signed.txt") as epistasis_rankings_file:
         epistasis_probability = []
         ranking = []
@@ -58,11 +83,32 @@ def epistasis_probability_from_comparisons_fast(fit_data_list):
                 signed_ranking_clean = signed_ranking_clean.replace("-\n", "")
                 fitness = [int(r) for r in signed_ranking_clean.split(", ")]
                 prob = ranking_probability(fitness, fit_data_list)
-                if prob > 0.013:
+                if prob > cutoff_prob:
                     epistasis_probability.append(prob)
                     ranking.append(signed_ranking)
     epistasis_rankings_file.close()
     return [epistasis_probability, ranking]
+
+
+# Returns k closest entries to the mean for each component of fit_data_list:
+def closest_to_mean(fit_data_list, k, mean_type="mean"):
+    if mean_type == "mean":
+        means = [numpy.mean(fit_data_list[j]) for j in range(len(fit_data_list))]
+    elif mean_type == "median":
+        means = [numpy.median(fit_data_list[j]) for j in range(len(fit_data_list))]
+    fit_data_list_copy = []
+    for r in range(len(fit_data_list)):
+        copy = [fit_data_list[r][l] for l in range(len(fit_data_list[r]))]
+        fit_data_list_copy.append(copy)
+    output = []
+    for r in range(k):
+        output_r = []
+        for l in range(len(means)):
+            close_to_mean_index = (numpy.abs(fit_data_list_copy[l] - means[l])).argmin()
+            output_r.append(fit_data_list_copy[l][close_to_mean_index])
+            del fit_data_list_copy[l][close_to_mean_index]
+        output.append(output_r)
+    return output
 
 
 sigma_mean = [8, 3, 2, 6, 7, 5, 4, 1]
@@ -112,19 +158,64 @@ for s in range(size):
         f111.append(values.iloc[s, 0])
 f = [f000, f001, f010, f100, f011, f101, f110, f111]
 
+# print "Starting at:"
+# print datetime.datetime.now()
+# print
+# ret = epistasis_probability_from_comparisons_fast(f)
+# # for i in range(len(ret[0])):
+# #     print ret[0][i]
+# #     print ret[1][i]
+# print len(ret[0])
+# count_neg = 0
+# for i in range(len(ret[0])):
+#     if ret[1][i].endswith("-\n"):
+#         count_neg += 1
+# print count_neg
+# print
+# print "Finishing at:"
+# print datetime.datetime.now()
+
+cl_to_m = closest_to_mean(f, 5)
+all_combinations = []
+for v0 in range(5):
+    for v1 in range(5):
+        for v2 in range(5):
+            for v3 in range(5):
+                for v4 in range(5):
+                    for v5 in range(5):
+                        for v6 in range(5):
+                            for v7 in range(5):
+                                fitness = [cl_to_m[v0][0], cl_to_m[v1][1], cl_to_m[v2][2], cl_to_m[v3][3],
+                                           cl_to_m[v4][4], cl_to_m[v5][5], cl_to_m[v6][6], cl_to_m[v7][7]]
+                                if len(set(fitness)) == 8:  # Drop tuples with identical ranks.
+                                    all_combinations.append(fitness)
+count_positive = 0
+count_negative = 0
+actual_epi_count = 0
+for i in range(len(all_combinations)):
+    a = all_combinations[i]
+    if a[0] + a[4] + a[5] + a[6] - a[1] - a[2] - a[3] - a[7] > 0:
+        actual_epi_count += 1
+    check = check_for_epistasis(all_combinations[i])
+    if check[0]:
+        count_positive += 1
+    elif check[1]:
+        count_negative += 1
+counts = [actual_epi_count, count_positive, count_negative, len(all_combinations)]
+print "Actual count of positive epistasis profiles: " + str(counts[0])
+print "Rank-positive counts: " + str(counts[1])
+print "Rank-negative counts: " + str(counts[2])
+print "Total counts: " + str(counts[3])
+
+print
 print "Starting at:"
 print datetime.datetime.now()
 print
-ret = epistasis_probability_from_comparisons_fast(f)
-# for i in range(len(ret[0])):
-#     print ret[0][i]
-#     print ret[1][i]
-print len(ret[0])
-count_neg = 0
-for i in range(len(ret[0])):
-    if ret[1][i].endswith("-\n"):
-        count_neg += 1
-print count_neg
+threshold_prob = 0.0184
+print "Threshold probability: " + str(threshold_prob)
+t = epistasis_probability_from_comparisons(f, threshold_prob)
+epi_prob = (t[0] + t[1]) / float(t[2])
+print "Epistasis probability: " + str(epi_prob)
 print
 print "Finishing at:"
 print datetime.datetime.now()

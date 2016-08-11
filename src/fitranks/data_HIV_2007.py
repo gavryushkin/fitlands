@@ -15,16 +15,16 @@ mean = [1.5800, 1.1950, 1.1330, 1.4410, 1.4300, 1.2320, 1.2940, 1.0450]
 qu3 = [1.7910, 1.7710, 1.4870, 1.7890, 1.6360, 1.5840, 1.5370, 1.3850]
 maxim = [2.0530, 1.7850, 1.5310, 1.8750, 1.7240, 1.8870, 1.6920, 1.7900]
 
-check_for_epistasis(minim)
-check_for_epistasis(qu1)
-check_for_epistasis(median)
-check_for_epistasis(mean, True)
-check_for_epistasis(qu3)
-check_for_epistasis(maxim)
-
-
-minim.reverse()
-check_for_epistasis(minim)
+# check_for_epistasis(minim)
+# check_for_epistasis(qu1)
+# check_for_epistasis(median)
+# check_for_epistasis(mean, True)
+# check_for_epistasis(qu3)
+# check_for_epistasis(maxim)
+#
+#
+# minim.reverse()
+# check_for_epistasis(minim)
 
 
 def get_mean_fitness(data_file, mutations, sites, mean_type=""):
