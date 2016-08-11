@@ -7,87 +7,74 @@ import datetime
 __author__ = '@gavruskin'
 
 
-# Gives the probability P(sigma[0] < ... < sigma[7]).
-def ranking_probability(sigma, fit_data_list):
-    # Now use that P(sigma) = \Pi_{sigma[j-1] < sigma[j]} p_{j-1, j}, that is, we multiply all such p_{j-1,j}.
-    # For that, use P(W_i < W_j) = \sum_x P(W_j = x) * P(W_i < x):
-    output = 1
-    for j in range(1, len(sigma)):  # \Pi__j
-            probability_j = 1 / float(len(fit_data_list[sigma[j] - 1]))  # That's P(W_j = x), which doesn't depend on x.
-            # Now find probability_i = \sum_x P(W_i < x):
-            count = 0
-            for s in range(len(fit_data_list[sigma[j] - 1])):
-                for r in range(len(fit_data_list[sigma[j-1] - 1])):
-                    if fit_data_list[sigma[j-1] - 1][r] < fit_data_list[sigma[j] - 1][s]:
-                        count += 1
-            probability_i = count / float(len(fit_data_list[sigma[j - 1] - 1]))
-            # Multiply the running probability by p_{i, j}:
-            output *= probability_j * probability_i
+# Gives the probabilities p_{i, j}, where {i, j} \subset {1, ..., 8} given trial lists using
+# P(W_i < W_j) = \sum_x P(W_j = x) * P(W_i < x):
+def ranking_probabilities(fit_data_list):
+    output = [[0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0]]
+    for j in range(8):
+        for i in range(8):
+            if i != j:
+                probability_j = 1 / float(len(fit_data_list[j]))  # That's P(W_j = x), which doesn't depend on x.
+                # Now find probability_i = \sum_x P(W_i < x):
+                count = 0
+                for x in range(len(fit_data_list[j])):  # This is \sum_x
+                    for r in range(len(fit_data_list[i])):
+                        if fit_data_list[i][r] < fit_data_list[j][x]:
+                            count += 1
+                probability_i = count / float(len(fit_data_list[i]))
+                # Multiply the running probability by p_{i, j}:
+                output[i][j] = probability_j * probability_i
     return output
 
 
-# Comparison model (second in the paper).
-# Returns the triple t of counts of rankings with higher than cutoff_prob probability such that
-# t[0] imply positive epistasis, t[1] negative, t[2] the total number of such rankings.
-def epistasis_probability_from_comparisons(fit_data_list, cutoff_prob):
-    epistasis_probability = 0
-    # Loop through all rankings (they called fitness in the code):
+# The comparison (competition experiment) model.
+# Returns the probability of epistasis given the trial data.
+def epistasis_probability_from_comparisons(fit_data_list):
+    # Compute probabilities P(W_i < W_j) = p_{i,j}:
+    p_ij = ranking_probabilities(fit_data_list)
+    # Loop through all rankings:
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
-    fitness = [1, 2, 3, 4, 5, 6, 7, 8]
+    ranking = [1, 2, 3, 4, 5, 6, 7, 8]
     positives = {1, 5, 6, 7}
     negatives = {4, 3, 2, 8}
     repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
-    prob = ranking_probability(fitness, fit_data_list)
-    positive_count = 0
-    negative_count = 0
-    total_count = 0
-    if prob > cutoff_prob:
-        if epistasis_positive(fitness, positives, negatives, repetitions):
-            positive_count += 1
-            total_count +=1
-        elif epistasis_negative(fitness, positives, negatives, repetitions):
-            negative_count += 1
-            total_count += 1
-        else:
-            total_count += 1
+    positive_epi_prob = 0
+    negative_epi_prob = 0
+    total_prob_mass = 0
+    # Compute the probability of the ranking as \Pi_{i, j} p_{i, j}.
+    rank_prob = 1
+    for j in range(len(ranking)):
+        for i in range(j):
+            rank_prob *= p_ij[ranking[i] - 1][ranking[j] - 1]
+    total_prob_mass += rank_prob
+    if epistasis_positive(ranking, positives, negatives, repetitions):
+        positive_epi_prob += rank_prob
+    elif epistasis_negative(ranking, positives, negatives, repetitions):
+        negative_epi_prob += rank_prob
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
-        fitness = ordering_to_fitness(ordering)
-        prob = ranking_probability(fitness, fit_data_list)
-        if prob > cutoff_prob:
-            if epistasis_positive(fitness, positives, negatives, repetitions):
-                positive_count += 1
-                total_count += 1
-            elif epistasis_negative(fitness, positives, negatives, repetitions):
-                negative_count += 1
-                total_count += 1
-            else:
-                total_count += 1
-    print "Number of positives: " + str(positive_count)
-    print "Number of negative: " + str(negative_count)
-    print "Total number: " + str(total_count)
-    return [positive_count, negative_count, total_count]
-
-
-# Uses precomputed rankings that imply epistasis and returns those that have probability higher than cutoff_prob and
-# imply positive epistasis with their probabilities.
-def epistasis_probability_from_comparisons_fast(fit_data_list, cutoff_prob):
-    with open("outputs/circuit_u_111_orders_signed.txt") as epistasis_rankings_file:
-        epistasis_probability = []
-        ranking = []
-        for signed_ranking in epistasis_rankings_file:
-            # if signed_ranking.endswith("+\n"):
-                signed_ranking_clean = signed_ranking.replace("[", "")
-                signed_ranking_clean = signed_ranking_clean.replace("]", "")
-                signed_ranking_clean = signed_ranking_clean.replace("+\n", "")
-                signed_ranking_clean = signed_ranking_clean.replace("-\n", "")
-                fitness = [int(r) for r in signed_ranking_clean.split(", ")]
-                prob = ranking_probability(fitness, fit_data_list)
-                if prob > cutoff_prob:
-                    epistasis_probability.append(prob)
-                    ranking.append(signed_ranking)
-    epistasis_rankings_file.close()
-    return [epistasis_probability, ranking]
+        ranking = ordering_to_fitness(ordering)
+        rank_prob = 1
+        for j in range(len(ranking)):
+            for i in range(j):
+                rank_prob *= p_ij[ranking[i] - 1][ranking[j] - 1]
+        total_prob_mass += rank_prob
+        if epistasis_positive(ranking, positives, negatives, repetitions):
+            positive_epi_prob += rank_prob
+        elif epistasis_negative(ranking, positives, negatives, repetitions):
+            negative_epi_prob += rank_prob
+    positive_epi_prob /= total_prob_mass
+    negative_epi_prob /= total_prob_mass
+    print "Probability of positive epistasis: " + str(positive_epi_prob)
+    print "Probability of negative epistasis: " + str(negative_epi_prob)
+    return [positive_epi_prob, negative_epi_prob]
 
 
 # Returns k closest entries to the mean for each component of fit_data_list:
@@ -131,91 +118,32 @@ f011 = []
 f101 = []
 f110 = []
 f111 = []
-for s in range(size):
-    if (values.iloc[s, 2] == mutations[0][0]) & (values.iloc[s, 3] == mutations[1][0]) &\
-            (values.iloc[s, 4] == mutations[2][0]):
-        f000.append(values.iloc[s, 0])
-    elif (values.iloc[s, 2] == mutations[0][0]) & (values.iloc[s, 3] == mutations[1][0]) &\
-            (values.iloc[s, 4] == mutations[2][1]):
-        f001.append(values.iloc[s, 0])
-    elif (values.iloc[s, 2] == mutations[0][0]) & (values.iloc[s, 3] == mutations[1][1]) &\
-            (values.iloc[s, 4] == mutations[2][0]):
-        f010.append(values.iloc[s, 0])
-    elif (values.iloc[s, 2] == mutations[0][1]) & (values.iloc[s, 3] == mutations[1][0]) &\
-            (values.iloc[s, 4] == mutations[2][0]):
-        f100.append(values.iloc[s, 0])
-    elif (values.iloc[s, 2] == mutations[0][0]) & (values.iloc[s, 3] == mutations[1][1]) &\
-            (values.iloc[s, 4] == mutations[2][1]):
-        f011.append(values.iloc[s, 0])
-    elif (values.iloc[s, 2] == mutations[0][1]) & (values.iloc[s, 3] == mutations[1][0]) &\
-            (values.iloc[s, 4] == mutations[2][1]):
-        f101.append(values.iloc[s, 0])
-    elif (values.iloc[s, 2] == mutations[0][1]) & (values.iloc[s, 3] == mutations[1][1]) &\
-            (values.iloc[s, 4] == mutations[2][0]):
-        f110.append(values.iloc[s, 0])
-    elif (values.iloc[s, 2] == mutations[0][1]) & (values.iloc[s, 3] == mutations[1][1]) &\
-            (values.iloc[s, 4] == mutations[2][1]):
-        f111.append(values.iloc[s, 0])
+for m in range(size):
+    if (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][0]) &\
+            (values.iloc[m, 4] == mutations[2][0]):
+        f000.append(values.iloc[m, 0])
+    elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][0]) &\
+            (values.iloc[m, 4] == mutations[2][1]):
+        f001.append(values.iloc[m, 0])
+    elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][1]) &\
+            (values.iloc[m, 4] == mutations[2][0]):
+        f010.append(values.iloc[m, 0])
+    elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][0]) &\
+            (values.iloc[m, 4] == mutations[2][0]):
+        f100.append(values.iloc[m, 0])
+    elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][1]) &\
+            (values.iloc[m, 4] == mutations[2][1]):
+        f011.append(values.iloc[m, 0])
+    elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][0]) &\
+            (values.iloc[m, 4] == mutations[2][1]):
+        f101.append(values.iloc[m, 0])
+    elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][1]) &\
+            (values.iloc[m, 4] == mutations[2][0]):
+        f110.append(values.iloc[m, 0])
+    elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][1]) &\
+            (values.iloc[m, 4] == mutations[2][1]):
+        f111.append(values.iloc[m, 0])
 f = [f000, f001, f010, f100, f011, f101, f110, f111]
 
-# print "Starting at:"
-# print datetime.datetime.now()
-# print
-# ret = epistasis_probability_from_comparisons_fast(f)
-# # for i in range(len(ret[0])):
-# #     print ret[0][i]
-# #     print ret[1][i]
-# print len(ret[0])
-# count_neg = 0
-# for i in range(len(ret[0])):
-#     if ret[1][i].endswith("-\n"):
-#         count_neg += 1
-# print count_neg
-# print
-# print "Finishing at:"
-# print datetime.datetime.now()
 
-cl_to_m = closest_to_mean(f, 5)
-all_combinations = []
-for v0 in range(5):
-    for v1 in range(5):
-        for v2 in range(5):
-            for v3 in range(5):
-                for v4 in range(5):
-                    for v5 in range(5):
-                        for v6 in range(5):
-                            for v7 in range(5):
-                                fitness = [cl_to_m[v0][0], cl_to_m[v1][1], cl_to_m[v2][2], cl_to_m[v3][3],
-                                           cl_to_m[v4][4], cl_to_m[v5][5], cl_to_m[v6][6], cl_to_m[v7][7]]
-                                if len(set(fitness)) == 8:  # Drop tuples with identical ranks.
-                                    all_combinations.append(fitness)
-count_positive = 0
-count_negative = 0
-actual_epi_count = 0
-for i in range(len(all_combinations)):
-    a = all_combinations[i]
-    if a[0] + a[4] + a[5] + a[6] - a[1] - a[2] - a[3] - a[7] > 0:
-        actual_epi_count += 1
-    check = check_for_epistasis(all_combinations[i])
-    if check[0]:
-        count_positive += 1
-    elif check[1]:
-        count_negative += 1
-counts = [actual_epi_count, count_positive, count_negative, len(all_combinations)]
-print "Actual count of positive epistasis profiles: " + str(counts[0])
-print "Rank-positive counts: " + str(counts[1])
-print "Rank-negative counts: " + str(counts[2])
-print "Total counts: " + str(counts[3])
-
-print
-print "Starting at:"
-print datetime.datetime.now()
-print
-threshold_prob = 0.0184
-print "Threshold probability: " + str(threshold_prob)
-t = epistasis_probability_from_comparisons(f, threshold_prob)
-epi_prob = (t[0] + t[1]) / float(t[2])
-print "Epistasis probability: " + str(epi_prob)
-print
-print "Finishing at:"
-print datetime.datetime.now()
+epistasis_probability_from_comparisons(f)
