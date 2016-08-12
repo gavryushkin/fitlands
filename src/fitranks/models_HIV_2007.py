@@ -1,14 +1,12 @@
 import pandas
 import numpy
-from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative,\
-    check_for_epistasis
-import datetime
+from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative
 
 __author__ = '@gavruskin'
 
 
-# Gives the probabilities p_{i, j}, where {i, j} \subset {1, ..., 8} given trial lists using
-# P(W_i < W_j) = \sum_x P(W_j = x) * P(W_i < x):
+# Gives the probabilities output[i][j] = p_{i, j}, where {i, j} \subset {1, ..., 8} given trial lists using
+# p_{i, j} = P(W_i < W_j) = \sum_x P(W_j = x) * P(W_i < x):
 def ranking_probabilities(fit_data_list):
     output = [[0, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0, 0],
@@ -73,8 +71,33 @@ def epistasis_probability_from_comparisons(fit_data_list):
     positive_epi_prob /= total_prob_mass
     negative_epi_prob /= total_prob_mass
     print "Probability of positive epistasis: " + str(positive_epi_prob)
-    print "Probability of negative epistasis: " + str(negative_epi_prob)
+    print "Probability of negative epistasis: " + str(negative_epi_prob) + "\n"
     return [positive_epi_prob, negative_epi_prob]
+
+
+# Returns the probability of positive and negative epistasis from the fitness measurements.
+def epistasis_from_values(fit_data_list):
+    epi_pos = epi_neg = total_count = 0
+    for w0 in range(len(fit_data_list[0])):
+        for w1 in range(len(fit_data_list[1])):
+            for w2 in range(len(fit_data_list[2])):
+                for w3 in range(len(fit_data_list[3])):
+                    for w4 in range(len(fit_data_list[4])):
+                        for w5 in range(len(fit_data_list[5])):
+                            for w6 in range(len(fit_data_list[6])):
+                                for w7 in range(len(fit_data_list[7])):
+                                    total_count += 1
+                                    e = (fit_data_list[0][w0] + fit_data_list[4][w4] + fit_data_list[5][w5] +
+                                         fit_data_list[6][w6]) - \
+                                        (fit_data_list[1][w1] + fit_data_list[2][w2] + fit_data_list[3][w3] +
+                                         fit_data_list[7][w7])
+                                    if e > 0:
+                                        epi_pos += 1
+                                    elif e < 0:
+                                        epi_neg += 1
+    epi_pos_prob = epi_pos / float(total_count)
+    epi_neg_prob = epi_neg / float(total_count)
+    return [epi_pos_prob, epi_neg_prob, epi_pos, epi_neg, total_count]
 
 
 # Returns k closest entries to the mean for each component of fit_data_list:
@@ -98,52 +121,52 @@ def closest_to_mean(fit_data_list, k, mean_type="mean"):
     return output
 
 
-sigma_mean = [8, 3, 2, 6, 7, 5, 4, 1]
-data_file = "2007_HIV_data.csv"
-mutations = [["L", "M"],  # mutations: L to M, M to V, t to Y
+def datafile_hiv_process():
+    data_file = "2007_HIV_data.csv"
+    mutations = [["L", "M"],  # mutations: L to M, M to V, t to Y
                  ["M", "V"],
                  ["t", "Y"]]
-sites = [88, 244, 275]  # sites: PRO L90M, RT M184V, RT T215Y
+    sites = [88, 244, 275]  # sites: PRO L90M, RT M184V, RT T215Y
+    sites = [0] + [1] + sites  # This is specific to the data file. Column 0 contains fitness, column 1 names.
+    values = pandas.read_csv(data_file, usecols=sites)
+    values.iloc[:, 0] = numpy.log10(values.iloc[:, 0])  # log10 scale of fitness values.
+    size = len(values.iloc[:, 1])
+    f000 = []
+    f001 = []
+    f010 = []
+    f100 = []
+    f011 = []
+    f101 = []
+    f110 = []
+    f111 = []
+    for m in range(size):
+        if (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][0]) & \
+                (values.iloc[m, 4] == mutations[2][0]):
+            f000.append(values.iloc[m, 0])
+        elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][0]) & \
+                (values.iloc[m, 4] == mutations[2][1]):
+            f001.append(values.iloc[m, 0])
+        elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][1]) & \
+                (values.iloc[m, 4] == mutations[2][0]):
+            f010.append(values.iloc[m, 0])
+        elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][0]) & \
+                (values.iloc[m, 4] == mutations[2][0]):
+            f100.append(values.iloc[m, 0])
+        elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][1]) & \
+                (values.iloc[m, 4] == mutations[2][1]):
+            f011.append(values.iloc[m, 0])
+        elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][0]) & \
+                (values.iloc[m, 4] == mutations[2][1]):
+            f101.append(values.iloc[m, 0])
+        elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][1]) & \
+                (values.iloc[m, 4] == mutations[2][0]):
+            f110.append(values.iloc[m, 0])
+        elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][1]) & \
+                (values.iloc[m, 4] == mutations[2][1]):
+            f111.append(values.iloc[m, 0])
+    return [f000, f001, f010, f100, f011, f101, f110, f111]
 
 
-sites = [0] + [1] + sites  # This is specific to the data file. Column 0 contains fitness, column 1 names.
-values = pandas.read_csv(data_file, usecols=sites)
-values.iloc[:, 0] = numpy.log10(values.iloc[:, 0])  # log10 scale of fitness values.
-size = len(values.iloc[:, 1])
-f000 = []
-f001 = []
-f010 = []
-f100 = []
-f011 = []
-f101 = []
-f110 = []
-f111 = []
-for m in range(size):
-    if (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][0]) &\
-            (values.iloc[m, 4] == mutations[2][0]):
-        f000.append(values.iloc[m, 0])
-    elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][0]) &\
-            (values.iloc[m, 4] == mutations[2][1]):
-        f001.append(values.iloc[m, 0])
-    elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][1]) &\
-            (values.iloc[m, 4] == mutations[2][0]):
-        f010.append(values.iloc[m, 0])
-    elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][0]) &\
-            (values.iloc[m, 4] == mutations[2][0]):
-        f100.append(values.iloc[m, 0])
-    elif (values.iloc[m, 2] == mutations[0][0]) & (values.iloc[m, 3] == mutations[1][1]) &\
-            (values.iloc[m, 4] == mutations[2][1]):
-        f011.append(values.iloc[m, 0])
-    elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][0]) &\
-            (values.iloc[m, 4] == mutations[2][1]):
-        f101.append(values.iloc[m, 0])
-    elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][1]) &\
-            (values.iloc[m, 4] == mutations[2][0]):
-        f110.append(values.iloc[m, 0])
-    elif (values.iloc[m, 2] == mutations[0][1]) & (values.iloc[m, 3] == mutations[1][1]) &\
-            (values.iloc[m, 4] == mutations[2][1]):
-        f111.append(values.iloc[m, 0])
-f = [f000, f001, f010, f100, f011, f101, f110, f111]
-
-
+f = datafile_hiv_process()
+print epistasis_from_values(f)
 epistasis_probability_from_comparisons(f)
