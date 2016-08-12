@@ -34,7 +34,7 @@ def ranking_probabilities(fit_data_list):
 
 # The comparison (competition experiment) model.
 # Returns the probability of epistasis given the trial data.
-def epistasis_probability_from_comparisons(fit_data_list):
+def epistasis_probability_from_comparisons(fit_data_list, threshold_prob):
     # Compute probabilities P(W_i < W_j) = p_{i,j}:
     p_ij = ranking_probabilities(fit_data_list)
     # Loop through all rankings:
@@ -46,6 +46,9 @@ def epistasis_probability_from_comparisons(fit_data_list):
     positive_epi_prob = 0
     negative_epi_prob = 0
     total_prob_mass = 0
+    positive_rankings = []
+    negative_rankings = []
+    non_informative_rankings = []
     # Compute the probability of the ranking as \Pi_{i, j} p_{i, j}.
     rank_prob = 1
     for j in range(len(ranking)):
@@ -54,8 +57,14 @@ def epistasis_probability_from_comparisons(fit_data_list):
     total_prob_mass += rank_prob
     if epistasis_positive(ranking, positives, negatives, repetitions):
         positive_epi_prob += rank_prob
+        if rank_prob > threshold_prob:
+            positive_rankings.append([ranking, rank_prob])
     elif epistasis_negative(ranking, positives, negatives, repetitions):
         negative_epi_prob += rank_prob
+        if rank_prob > threshold_prob:
+            negative_rankings.append([ranking, rank_prob])
+    elif rank_prob > threshold_prob:
+        non_informative_rankings.append([ranking, rank_prob])
     while ordering != [8, 7, 6, 5, 4, 3, 2, 1]:
         ordering = get_next_ordering(ordering)
         ranking = ordering_to_fitness(ordering)
@@ -66,13 +75,40 @@ def epistasis_probability_from_comparisons(fit_data_list):
         total_prob_mass += rank_prob
         if epistasis_positive(ranking, positives, negatives, repetitions):
             positive_epi_prob += rank_prob
+            if rank_prob > threshold_prob:
+                positive_rankings.append([ranking, rank_prob])
         elif epistasis_negative(ranking, positives, negatives, repetitions):
             negative_epi_prob += rank_prob
+            if rank_prob > threshold_prob:
+                negative_rankings.append([ranking, rank_prob])
+        elif rank_prob > threshold_prob:
+            non_informative_rankings.append([ranking, rank_prob])
     positive_epi_prob /= total_prob_mass
     negative_epi_prob /= total_prob_mass
-    print "Probability of positive epistasis: " + str(positive_epi_prob)
-    print "Probability of negative epistasis: " + str(negative_epi_prob) + "\n"
-    return [positive_epi_prob, negative_epi_prob]
+    # print "Probability of positive epistasis: " + str(positive_epi_prob)
+    # print "Probability of negative epistasis: " + str(negative_epi_prob)
+
+    top_pos_epi_prob = 0
+    for i in range(len(positive_rankings)):
+        top_pos_epi_prob += positive_rankings[i][1]
+    top_neg_epi_prob = 0
+    for i in range(len(negative_rankings)):
+        top_neg_epi_prob += negative_rankings[i][1]
+    top_non_info_prob = 0
+    for i in range(len(non_informative_rankings)):
+        top_non_info_prob += non_informative_rankings[i][1]
+    print "Threshold probability: " + str(threshold_prob)
+    print "Top rankings with positive epistasis: " + str(positive_rankings)
+    print str(len(positive_rankings)) + " in total"
+    print "With total probability: " + str(top_pos_epi_prob)
+    print "Top rankings with negative epistasis: " + str(negative_rankings)
+    print str(len(negative_rankings)) + " in total"
+    print "With total probability: " + str(top_neg_epi_prob)
+    print "Top non-informative rankings: " + str(non_informative_rankings)
+    print str(len(non_informative_rankings)) + " in total"
+    print "With total probability: " + str(top_non_info_prob) + "\n"
+    return [[positive_epi_prob, negative_epi_prob],
+            [positive_rankings, negative_rankings, non_informative_rankings]]
 
 
 # Returns the probability of positive and negative epistasis from the fitness measurements.
@@ -168,5 +204,4 @@ def datafile_hiv_process():
 
 
 f = datafile_hiv_process()
-print epistasis_from_values(f)
-epistasis_probability_from_comparisons(f)
+epistasis_probability_from_comparisons(f, 0.0000011)
