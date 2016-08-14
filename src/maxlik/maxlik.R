@@ -1,37 +1,45 @@
 #!/usr/bin/Rscript 
-N=8 #number of elements
+
+#Command line args used as initial point in optimization below
+argv=commandArgs(TRUE)
+argc=length(argv)
+N=argc+1 # number of elements
+if(N==1) q(status=1)
 sqrt2=sqrt(2)
+
 #load the comparison data as a matrix
-file=file("data","r")
+file=file("stdin","r")
 M = matrix(scan(file,quiet=TRUE),ncol=N,nrow=N,byrow=TRUE)
 close(file)
 
 #maximum likelihood function
 likfun<-function(p,...){
-	if(length(p)!=N-1) return("Error")
+	if(length(p)!=N-1) q(status=2)
 	range=seq(length(p)+1)
-	p[N]=0
+	#shift to include zero at start
+	q=numeric(N)
+	q[1]=0
+	q[2:N]=p
 	F=0
 	for(i in range){
 		for(j in range){
 			if(i==j) next
-			F=F+M[i,j]*log(pnorm(p[i]-p[j],sd=sqrt2))
+			F=F+M[i,j]*log(pnorm(q[i]-q[j],sd=sqrt2))
 		}
 	}	
+	#nlm _minimizes_, so we take negative of result
 	return (-F)
 }
 
-argv=commandArgs(TRUE)
-argc=length(argv)
-if(argc!=N-1) quit(status=1)
-Ini=numeric(argc)
-for(i in seq(argv)){
-	Ini[i]=as.numeric(argv[i])
-}
+Ini=as.numeric(argv)
 
-nlm<-nlm(likfun,Ini,print.level=0)
-parameters=c(nlm$estimate,0)
+# print out _all_ warnings
+options(warn=1)
+estimate<-nlm(likfun,Ini,print.level=0)$estimate
+# print out parameters in first line of output
+parameters=c(0,estimate)
 cat("Parameters:",parameters,"\n")
+
 rankings=c()
 
 #Sample size S.  Samples based on parameters derived from maximum likelihood.
@@ -48,6 +56,7 @@ for(i in 1:S){
 		names(rankings)[length(rankings)]=string
 	}
 }
+rankings=sort(rankings,decreasing=TRUE)
 rankings=rankings/sum(rankings)
 if(length(rankings)==1)
 	cat(names(rankings)," : ",rankings,"\n") else

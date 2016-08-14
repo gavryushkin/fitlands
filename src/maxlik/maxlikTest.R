@@ -1,5 +1,5 @@
 #!/usr/bin/Rscript
-file=file("parameters","r")
+file=file("stdin","r")
 para=scan(file,quiet=TRUE)
 close(file)
 
