@@ -181,8 +181,14 @@ def write_epistasis_to_file_random_algorithm():
     i = 0
     while i < iterations:
         fitness_values = get_random_fitness_values()
-        epistasis1 = fitness_values1[fitness.index(1)] + fitness_values1[fitness.index(5)] + fitness_values1[fitness.index(6)] + fitness_values1[fitness.index(7)] - fitness_values1[fitness.index(2)] - fitness_values1[fitness.index(3)] - fitness_values1[fitness.index(4)] - fitness_values1[fitness.index(8)]
-        epistasis2 = fitness_values[fitness.index(1)] + fitness_values[fitness.index(5)] + fitness_values[fitness.index(6)] + fitness_values[fitness.index(7)] - fitness_values[fitness.index(2)] - fitness_values[fitness.index(3)] - fitness_values[fitness.index(4)] - fitness_values[fitness.index(8)]
+        epistasis1 = fitness_values1[fitness.index(1)] + fitness_values1[fitness.index(5)] +\
+                     fitness_values1[fitness.index(6)] + fitness_values1[fitness.index(7)] -\
+                     fitness_values1[fitness.index(2)] - fitness_values1[fitness.index(3)] -\
+                     fitness_values1[fitness.index(4)] - fitness_values1[fitness.index(8)]
+        epistasis2 = fitness_values[fitness.index(1)] + fitness_values[fitness.index(5)] +\
+                     fitness_values[fitness.index(6)] + fitness_values[fitness.index(7)] -\
+                     fitness_values[fitness.index(2)] - fitness_values[fitness.index(3)] -\
+                     fitness_values[fitness.index(4)] - fitness_values[fitness.index(8)]
         if epistasis1 * epistasis2 < 0:
             ordering = get_next_ordering(ordering)
             if ordering == [8, 7, 6, 5, 4, 3, 2, 1]:
