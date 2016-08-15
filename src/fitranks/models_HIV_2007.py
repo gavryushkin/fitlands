@@ -2,6 +2,7 @@ import pandas
 import numpy
 from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative
 
+
 __author__ = '@gavruskin'
 
 
@@ -203,5 +204,5 @@ def datafile_hiv_process():
     return [f000, f001, f010, f100, f011, f101, f110, f111]
 
 
-f = datafile_hiv_process()
-epistasis_probability_from_comparisons(f, 0.0000011)
+# f = datafile_hiv_process()
+# epistasis_probability_from_comparisons(f, 0.0000011)
