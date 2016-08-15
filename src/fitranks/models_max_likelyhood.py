@@ -8,6 +8,7 @@ __author__ = '@gavruskin'
 # Given fitness profile (e.g. one returned by datafile_hiv_process),
 # generates n samples of pairwise comparisons of fitness.
 # The output is a matrix with i,j being the number of times i has higher fitness than j.
+# w_000 = w[0], w_001 = w[1], w_010 = w[2], w_100 = w[3], w_011 = w[4], w_101 = w[5], w_110 = w[6], w_111 = w[7]:
 def sample_ranks_randomly(fit_data_list, n):
     output = [[0, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0, 0],
@@ -31,6 +32,6 @@ def sample_ranks_randomly(fit_data_list, n):
 
 
 f = datafile_hiv_process()
-rankings = sample_ranks_randomly(f, 1000000)
+rankings = sample_ranks_randomly(f, 1000)
 for s in range(len(rankings)):
     print rankings[s]
