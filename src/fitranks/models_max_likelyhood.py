@@ -34,7 +34,10 @@ def sample_ranks_randomly(fit_data_list, n):
 f = datafile_hiv_process()
 f_means = [numpy.mean(f[0]), numpy.mean(f[1]), numpy.mean(f[2]), numpy.mean(f[3]),
            numpy.mean(f[4]), numpy.mean(f[5]), numpy.mean(f[6]), numpy.mean(f[7])]
+mean_f0 = numpy.mean(f[0])
+f_means_shifted = numpy.subtract(f_means, [mean_f0, mean_f0, mean_f0, mean_f0, mean_f0, mean_f0, mean_f0, mean_f0])
 print f_means
+print f_means_shifted
 rankings = sample_ranks_randomly(f, 1000)
 for s in range(len(rankings)):
     print rankings[s]
