@@ -1,26 +1,24 @@
 #!/usr/bin/Rscript 
 #options(digits=21)
 
-#Command line args used as initial point in optimization below
 argv=commandArgs(TRUE)
-argc=length(argv)
-N=argc+1 # number of elements
-if(N==1){
-	write("Error: No command line arguments?  Sure about that?",stderr())
+if(length(argv)!=2){
+	write("Two files as arguments; empirical data and initial parameters.",stderr())
 	q(status=1)
 }
-sqrt2=sqrt(2)
 
-#load the comparison data as a matrix
-file=file("stdin","r")
-data = scan(file,quiet=TRUE)
-	# Correct number of command line arguments?
-if(length(data) != N*N){
-	write("Error: Command line arguments should be one less than number of genotypes",file=stderr())
-	q(status=2)
+data=scan(argv[1],quiet=TRUE)
+parameters=scan(argv[2],quiet=TRUE)
+
+# N==number of genotypes
+N=length(parameters)+1
+if(length(data)!=N*N){
+	write("Contradicting sizes of data and parameters",stderr())
+	q(status=1)
 }
-M = matrix(data,ncol=N,nrow=N,byrow=TRUE)
-close(file)
+
+data = matrix(data,ncol=N,nrow=N,byrow=TRUE)
+sqrt2=sqrt(2)
 
 #maximum likelihood function
 likfun<-function(p,...){
@@ -34,21 +32,23 @@ likfun<-function(p,...){
 	for(i in range){
 		for(j in range){
 			if(i==j) next
-			F=F+M[i,j]*log(pnorm(q[i]-q[j],sd=sqrt2))
+			F=F+data[i,j]*log(pnorm(q[i]-q[j],sd=sqrt2))
 		}
 	}	
-	#nlm _minimizes_, so we take negative of result
+	#nlm _minimizes_, so we take negative of result.
 	return (-F)
 }
 
-Ini=as.numeric(argv)
-
 # print out _all_ warnings
 options(warn=1)
-estimate=nlm(likfun,Ini,print.level=0)$estimate
+optParameters=nlm(likfun,parameters,print.level=0)$estimate
+
 # print out parameters in first line of output
-parameters=c(0,estimate)
-cat("Parameters:",parameters,"\n")
+optParameters=c(0,optParameters)
+cat("Parameters:",optParameters,"\n")
+
+# print out parameter rank order
+cat(paste(order(optParameters)-1,collapse="<")," : ","Parameter rank order\n\n")
 
 rankings=c()
 
@@ -56,7 +56,7 @@ rankings=c()
 #Tallies proportion of each rank order which occurs.
 S=10000
 for(i in 1:S){
-	ranking=order(sapply(parameters,rnorm,n=1))-1
+	ranking=order(sapply(optParameters,rnorm,n=1))-1
 	string=paste(ranking,collapse="<")
 	if(string %in% names(rankings)){
 		rankings[string]=rankings[string]+1
@@ -66,6 +66,8 @@ for(i in 1:S){
 		names(rankings)[length(rankings)]=string
 	}
 }
+
+cat("Sampling based rankings\n")
 rankings=sort(rankings,decreasing=TRUE)
 rankings=rankings/sum(rankings)
 if(length(rankings)==1)
