@@ -202,7 +202,7 @@ def datafile_hiv_process():
                 (values.iloc[m, 4] == mutations[2][1]):
             f111.append(values.iloc[m, 0])
     return [f000, f001, f010, f100, f011, f101, f110, f111]
-
-
+#
+#
 # f = datafile_hiv_process()
-# epistasis_probability_from_comparisons(f, 0.0000011)
+# epistasis_probability_from_comparisons(f, 0.000002)
