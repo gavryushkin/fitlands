@@ -25,5 +25,5 @@ rs = rank_sum(f)
 print
 print rs
 print
-for i in range(len(rs)):
-    print numpy.mean(f[rs[i] - 1])
+for s in range(len(rs)):
+    print numpy.mean(f[rs[s] - 1])
