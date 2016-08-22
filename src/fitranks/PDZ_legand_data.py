@@ -8,6 +8,10 @@ shaker = [-1.97, -7.05, -13.57, -9.47, -7.97, -8.11, -10.01, -13.50, -7.04, -6.5
           10.07, -7.52]
 check_for_epistasis_four_way(shaker, True)
 
+shaker_mutant_cycle = [-1.97, -5.08, -11.60, 9.18, -6.00, 4.94, 9.56, -12.53, -5.07, 5.54, 10.22, -9.42, 7.99, -9.15,
+                       -13.20, 19.07]
+check_for_epistasis_four_way(shaker_mutant_cycle, True)
+
 free_energy = [-8.17, -7.58, -6.13, -5.96, -6.24, -7.70, -7.67, -8.45]
 check_for_epistasis(free_energy, True)
 
