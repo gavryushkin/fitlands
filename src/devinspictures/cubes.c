@@ -1,6 +1,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
+#include<unistd.h>
 
 #define uch unsigned char
 #define ui unsigned int
@@ -134,8 +135,10 @@ void matrixify(ui n)
 	char name[8];
 	char num[8];
 #ifdef FILTER
+	chdir("special20");
 	strcpy(name,"mats");
 #else
+	chdir("all54");
 	strcpy(name,"mat");
 #endif
 	sprintf(num,"%03x",n);
@@ -160,6 +163,7 @@ void matrixify(ui n)
 		fprintf(stream,"%d\n",mat[i][7]);
 	}
 	fclose(stream);
+	chdir("..");
 }
 
 /* Check that dyck condition holds */
