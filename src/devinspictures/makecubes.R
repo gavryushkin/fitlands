@@ -37,7 +37,7 @@ for(f in grep(paste0("^",pattern),dir(),value=TRUE,perl=TRUE))
 		c("111","110","101","011","100","010","001","000")
 		pos <-
 		c(1, 3, 3, 1)
-		file <- paste(sub(pattern,if(filter_true) "cubes" else "cube",f,perl=TRUE),".ps",sep="") 
+		file <- paste(sub(pattern,if(filter_true) "cubes" else "cube",f,perl=TRUE),".eps",sep="") 
 		setEPS(horizontal=FALSE,onefile=FALSE,paper="special")
 		postscript(file,height = 2.9, width = 2.9)
 		op <- par(mar = rep(0,4))
