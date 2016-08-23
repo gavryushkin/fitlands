@@ -1,3 +1,9 @@
-Compile cubes.c.  Make the directory "all54".  Running the executable from cubes.c followed by ./makecube.R with no arguments will make the pictures and put them in "all54".
+Compile cubes.c.  Make the directory "all54".  Running the executable fills
+all54 with text files consisting of a matrix representation of non-cyclic
+directed graphs on the cube modulo graph isomorphism.
 
-Next, compile cubes.c with the macro "FILTER" defined.  Make the directory "special20".  Running the executable from cube.c followed by './makecube.R FILTER' will make the pictures and put them in "special20"
+Next, compile cubes.c with the macro "FILTER" defined. Make the directory
+"special20".  Running the executable fills special20 with the graphs satisfying
+the "Dyck" condition. 
+
+Then run makecube.R with and without the argument "FILTER" to get the pictures.
