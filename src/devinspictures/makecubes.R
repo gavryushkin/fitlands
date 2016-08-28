@@ -12,10 +12,6 @@ for(f in grep(paste0("^",pattern),dir(),value=TRUE,perl=TRUE))
 		q(status=1)
 	}
 	s=filter_true || (sub("mat(?=[^s])","mats",f,perl=T)%in%dir("../special20"))
-	if(s){
-		cat(count," ",f," in special20\n")
-		count <- count+1
-	}
 	A <- matrix(scan(f,quiet=T),ncol=8,nrow=8,byrow=FALSE,
 			dimnames=list(c("000","001","010","011","100",
 					"101","110","111"),
