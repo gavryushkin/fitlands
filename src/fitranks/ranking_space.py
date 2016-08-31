@@ -21,6 +21,7 @@ def give_rank_neighbors(w):
 
 
 # A negative number indicates how strong the positive epistasis is.
+# Important this is not a metric!
 def dist_to_positive_epi(w, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8}):
     count = 0
     count_values = []
@@ -39,6 +40,7 @@ def dist_to_positive_epi(w, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8}):
 
 
 # A negative number indicates how strong the negative epistasis is.
+# Important this is not a metric!
 def dist_to_negative_epi(w, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8}):
     count = 0
     count_values = []
