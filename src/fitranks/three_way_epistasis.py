@@ -28,36 +28,36 @@ def ordering_to_fitness(x):
     return z
 
 
-# Returns i-th element of w which has + sign in the epistasis value.
-def epi_positives_get(i, w, positives, repetitions):
+# Returns i-th element of w which has - sign in the epistasis value.
+def epi_negatives_get(i, w, negatives, repetitions):
     positives_fitness_ranks = []
     for j in range(len(w)):
-        if w[j] in positives:
+        if w[j] in negatives:
             for rep in range(repetitions[w[j] - 1]):
                 positives_fitness_ranks.append(j)
     return positives_fitness_ranks[i]
 
 
-# Returns i-th element of w which has - sign in the epistasis value.
-def epi_negatives_get(i, w, negatives, repetitions):
+# Returns i-th element of w which has + sign in the epistasis value.
+def epi_positives_get(i, w, positives, repetitions):
     negatives_fitness_ranks = []
     for j in range(len(w)):
-        if w[j] in negatives:
+        if w[j] in positives:
             for rep in range(repetitions[w[j] - 1]):
                 negatives_fitness_ranks.append(j)
     return negatives_fitness_ranks[i]
 
 
-# Returns true if fitness ranks w imply positive epistasis.
-def epistasis_positive(w, positives, negatives, repetitions):
+# Returns true if fitness ranks w imply negative epistasis.
+def epistasis_negative(w, positives, negatives, repetitions):
     for i in range(len(positives)):  # TODO: should be max of lengths
         if not epi_positives_get(i, w, positives, repetitions) >= epi_negatives_get(i, w, negatives, repetitions):
             return False
     return True
 
 
-# Returns true if fitness ranks w imply negative epistasis.
-def epistasis_negative(w, positives, negatives, repetitions):
+# Returns true if fitness ranks w imply positive epistasis.
+def epistasis_positive(w, positives, negatives, repetitions):
     for i in range(len(positives)):  # TODO: should be max of lengths
         if not epi_positives_get(i, w, positives, repetitions) <= epi_negatives_get(i, w, negatives, repetitions):
             return False
