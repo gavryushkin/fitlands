@@ -1,4 +1,4 @@
-import os.path
+import os.path, sys
 from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative
 
 __author__ = "@gavruskin"
@@ -35,8 +35,9 @@ def all_total_extensions_brute_force(graph):
 # (To be compatible with other functions.)
 def partial_orders_from_file(file_name):
     if not os.path.isfile("./outputs/%s" % file_name):
-        print "Please put the file with partial orders into directory 'outputs' inside the working directory."
-        return
+        print "\nPlease put the file with partial orders into directory 'outputs' inside the working directory.\n" \
+              "Then, check that the script is called with the correctly spelled file name, including the extension."
+        sys.exit()
     partial_orders_file = open("./outputs/%s" % file_name, "r")
     output = []
     for line in partial_orders_file:
@@ -95,25 +96,31 @@ def convert_to_genotype(total_order):
     return output
 
 
-# TODO: Write this comment.
+# Takes file ./outputs/partial_orders.md with partial with partial orders.
+# If 'details' == True, returns two files: ./outputs/partial_orders_analysis.md and
+# ./outputs/partial_orders_analysis_details.md.
+# The first one contains the number of total extensions of each of the partial orders with numbers and fractions of
+# total orders that imply three-way epistasis.
+# The second contains the lists of those orders. Takes more time to produce than only the numbers.
+# If 'details' == False, only the first file is returned. More efficient.
 def analyze_partial_orders(file_name, details=False):
-    if os.path.isfile("./outputs/partial_orders_analysis.txt"):
-        print "File partial_orders_analysis.txt already exists in directory 'outputs'. Please remove."
-        return
-    output_file = open("./outputs/partial_orders_analysis.txt", "w")
-    output_file.write("This file was created using Fitlands software package.\n"
-                      "Please refer to https://github.com/gavruskin/fitlands for legal matters, "
+    if os.path.isfile("./outputs/partial_orders_analysis.md"):
+        print "\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove."
+        sys.exit()
+    output_file = open("./outputs/partial_orders_analysis.md", "w")
+    output_file.write("This file was created using software package Fitlands.\n"
+                      "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "
                       "and to stay tuned.\n"
                       "If you publish the results obtained with the help of this software, "
                       "please don't forget to cite us.\n")
     if details:
-        if os.path.isfile("./outputs/partial_orders_analysis_details.txt"):
-            print "File partial_orders_analysis_details.txt already exists in directory 'outputs'. Please remove."
-            return
-        output_file_details = open("./outputs/partial_orders_analysis_details.txt", "w")
-        output_file_details.write("This file was created using Fitlands software package.\n"
-                                  "Please refer to https://github.com/gavruskin/fitlands for legal matters, "
+        if os.path.isfile("./outputs/partial_orders_analysis_details.md"):
+            print "\nFile partial_orders_analysis_details.md already exists in directory 'outputs'. Please remove."
+            sys.exit()
+        output_file_details = open("./outputs/partial_orders_analysis_details.md", "w")
+        output_file_details.write("This file was created using software package Fitlands.\n"
+                                  "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                                   "to obtain up-to-date bibliographic information for Fitlands, "
                                   "and to stay tuned.\n"
                                   "If you publish the results obtained with the help of this software, "
@@ -153,7 +160,7 @@ def analyze_partial_orders(file_name, details=False):
                                       " (%s%%)\n" % round(imply_positive_percent, 2) +
                                       "Imply negative three-way epistasis: " + str(len(imply_negative)) +
                                       " (%s%%)\n" % round(imply_negative_percent, 2) + "\n" +
-                                      "List of total extensions with three-way epistasis signs:\n\n")
+                                      "List of total extensions followed by three-way epistasis signs:\n\n")
             for total_extension in total_extensions:
                 output_file_details.write(convert_to_genotype(total_extension))
                 if epistasis_positive(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
@@ -171,4 +178,173 @@ def analyze_partial_orders(file_name, details=False):
         output_file_details.close()
 
 
-analyze_partial_orders("partial_orders.txt", True)
+def get_circuit_formula(positives, negatives, repetitions):
+    circuit = ""
+    if 1 in positives:
+        if repetitions[0] > 1:
+            circuit += "%sw(000) " % str(repetitions[0])
+        elif repetitions[0] == 1:
+            circuit += "w(000) "
+    elif 1 in negatives:
+        if repetitions[0] > 1:
+            circuit += "-%sw(000) " % str(repetitions[0])
+        elif repetitions[0] == 1:
+            circuit += "-w(000) "
+    if 2 in positives:
+        if repetitions[1] > 1:
+            circuit += "+ %sw(001) " % str(repetitions[1])
+        elif repetitions[1] == 1:
+            circuit += "+ w(001) "
+    elif 2 in negatives:
+        if repetitions[1] > 1:
+            circuit += "+ %sw(001) " % str(repetitions[1])
+        elif repetitions[1] == 1:
+            circuit += "- w(001) "
+    if 3 in positives:
+        if repetitions[2] > 1:
+            circuit += "+ %sw(010) " % str(repetitions[2])
+        elif repetitions[2] == 1:
+            circuit += "+ w(010) "
+    elif 3 in negatives:
+        if repetitions[2] > 1:
+            circuit += "- %sw(010) " % str(repetitions[2])
+        elif repetitions[2] == 1:
+            circuit += "- w(010) "
+    if 4 in positives:
+        if repetitions[3] > 1:
+            circuit += "+ %sw(100) " % repetitions[3]
+        elif repetitions[3] == 1:
+            circuit += "+ w(100) "
+    elif 4 in negatives:
+        if repetitions[3] > 1:
+            circuit += "- %sw(100) " % repetitions[3]
+        elif repetitions[3] == 1:
+            circuit += "- w(100) "
+    if 5 in positives:
+        if repetitions[4] > 1:
+            circuit += "+ %sw(011) " % repetitions[4]
+        elif repetitions[4] == 1:
+            circuit += "+ w(011) "
+    elif 5 in negatives:
+        if repetitions[4] > 1:
+            circuit += "1 %sw(011) " % repetitions[4]
+        elif repetitions[4] == 1:
+            circuit += "- w(011) "
+    if 6 in positives:
+        if repetitions[5] > 1:
+            circuit += "+ %sw(101) " % repetitions[5]
+        elif repetitions[5] == 1:
+            circuit += "+ w(101) "
+    elif 6 in negatives:
+        if repetitions[5] > 1:
+            circuit += "- %sw(101) " % repetitions[5]
+        elif repetitions[5] == 1:
+            circuit += "- w(101) "
+    if 7 in positives:
+        if repetitions[6] > 1:
+            circuit += "+ %sw(110) " % repetitions[6]
+        elif repetitions[6] == 1:
+            circuit += "+ w(110) "
+    elif 7 in negatives:
+        if repetitions[6] > 1:
+            circuit += "- %sw(110) " % repetitions[6]
+        elif repetitions[6] == 1:
+            circuit += "- w(110) "
+    if 8 in positives:
+        if repetitions[7] > 1:
+            circuit += "+ %sw(111)" % repetitions[7]
+        elif repetitions[7] == 1:
+            circuit += "+ w(111)"
+    elif 8 in negatives:
+        if repetitions[7] > 1:
+            circuit += "- %sw(111)" % repetitions[7]
+        elif repetitions[7] == 1:
+            circuit += "- w(111)"
+    if circuit[1] == " ":
+        circuit = circuit[0] + circuit[2:]
+    return circuit
+
+
+# Does the same things as analyze_partial_orders but with respect to the given circuit instead of the plain
+# u_111 (three-way epistasis), which is the default option.
+# Hence, with defaults the behavior is identical to analyze_partial_orders.
+#
+# The reason to keep both analyze_partial_orders and analyze_partial_orders_for_circuit is that the former should be
+# more efficient, but that has to be tested.
+def analyze_partial_orders_for_circuit(file_name, details=False,
+                                       positives={1, 5, 6, 7}, negatives={4, 3, 2, 8}, repetitions=None):
+    if repetitions is None:
+        repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
+    if os.path.isfile("./outputs/partial_orders_analysis.md"):
+        print "\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove."
+        sys.exit()
+    output_file = open("./outputs/partial_orders_analysis.md", "w")
+    output_file.write("This file was created using software package Fitlands.\n"
+                      "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
+                      "to obtain up-to-date bibliographic information for Fitlands, "
+                      "and to stay tuned.\n"
+                      "If you publish the results obtained with the help of this software, "
+                      "please don't forget to cite us.\n")
+    circuit = get_circuit_formula(positives, negatives, repetitions)
+    output_file.write("\n\n# Analysis of circuit epistasis\ncircuit = " + circuit + "\n")
+    if details:
+        if os.path.isfile("./outputs/partial_orders_analysis_details.md"):
+            print "\nFile partial_orders_analysis_details.md already exists in directory 'outputs'. Please remove."
+            sys.exit()
+        output_file_details = open("./outputs/partial_orders_analysis_details.md", "w")
+        output_file_details.write("This file was created using software package Fitlands.\n"
+                                  "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
+                                  "to obtain up-to-date bibliographic information for Fitlands, "
+                                  "and to stay tuned.\n"
+                                  "If you publish the results obtained with the help of this software, "
+                                  "please don't forget to cite us.\n")
+        output_file_details.write("\n\n# Analysis of circuit epistasis\ncircuit = " + circuit + "\n")
+    partial_orders = partial_orders_from_file(file_name)
+    for partial_order in partial_orders:
+        partial_order_number = partial_orders.index(partial_order) + 1
+        output_file.write("\n\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
+        if details:
+            output_file_details.write("\n\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
+        total_extensions = all_total_extensions_brute_force(partial_order)
+        imply_positive = []
+        imply_negative = []
+        for total_extension in total_extensions:
+            if epistasis_positive(total_extension, positives, negatives, repetitions):
+                imply_positive.append(total_extension)
+            elif epistasis_negative(total_extension, positives, negatives, repetitions):
+                imply_negative.append(total_extension)
+        imply_epistasis_total = len(imply_positive) + len(imply_negative)
+        imply_epistasis_total_percent = 100 * imply_epistasis_total / float(len(total_extensions))
+        imply_positive_percent = 100 * len(imply_positive) / float(len(total_extensions))
+        imply_negative_percent = 100 * len(imply_negative) / float(len(total_extensions))
+        output_file.write("Number of total extensions: " + str(len(total_extensions)) + "\n" +
+                          "Imply circuit epistasis: " + str(imply_epistasis_total) +
+                          " (%s%%)\n" % round(imply_epistasis_total_percent, 2) +
+                          "Imply positive circuit epistasis: " + str(len(imply_positive)) +
+                          " (%s%%)\n" % round(imply_positive_percent, 2) +
+                          "Imply negative circuit epistasis: " + str(len(imply_negative)) +
+                          " (%s%%)\n" % round(imply_negative_percent, 2))
+        if details:
+            output_file_details.write("Number of total extensions: " + str(len(total_extensions)) + "\n" +
+                                      "Imply circuit epistasis: " + str(imply_epistasis_total) +
+                                      " (%s%%)\n" % round(imply_epistasis_total_percent, 2) +
+                                      "Imply positive circuit epistasis: " + str(len(imply_positive)) +
+                                      " (%s%%)\n" % round(imply_positive_percent, 2) +
+                                      "Imply negative circuit epistasis: " + str(len(imply_negative)) +
+                                      " (%s%%)\n" % round(imply_negative_percent, 2) + "\n" +
+                                      "List of total extensions followed by circuit epistasis signs:\n\n")
+            for total_extension in total_extensions:
+                output_file_details.write(convert_to_genotype(total_extension))
+                if epistasis_positive(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
+                                      repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
+                    output_file_details.write("  +\n")
+                elif epistasis_negative(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
+                                        repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
+                    output_file_details.write("  -\n")
+                else:
+                    output_file_details.write(" +/-\n")
+    output_file.write("\n")
+    output_file.close()
+    if details:
+        output_file_details.write("\n")
+        output_file_details.close()
