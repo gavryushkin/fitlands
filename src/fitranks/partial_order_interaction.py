@@ -1,5 +1,5 @@
 import os.path
-from three_way_epistasis import get_next_ordering, ordering_to_fitness
+from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative
 
 
 __author__ = "@gavruskin"
@@ -70,13 +70,32 @@ def partial_orders_from_file(file_name):
     return output
 
 
-def analyze_partial_orders(file_name):
+# TODO: Write this comment.
+def analyze_partial_orders(file_name, details=False):
+    if os.path.isfile("./outputs/partial_orders_analysis.txt"):
+        print "File partial_orders_analysis.txt already exists in directory 'outputs'. Please remove."
+        return
+    output_file = open("./outputs/partial_orders_analysis.txt", "w")
+    output_file.write("This file was created using...\n\n")  # TODO: Write this.
     partial_orders = partial_orders_from_file(file_name)
     for partial_order in partial_orders:
+        partial_order_number = partial_orders.index(partial_order) + 1
+        output_file.write("\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
         total_extensions = all_total_extensions_brute_force(partial_order)
+        imply_positive = []
+        imply_negative = []
         for total_extension in total_extensions:
-            print total_extension
-        print
+            if epistasis_positive(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
+                                  repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
+                imply_positive.append(total_extension)
+            elif epistasis_negative(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
+                                    repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
+                imply_negative.append(total_extension)
+        imply_epistasis_total = len(imply_positive) + len(imply_negative)
+        output_file.write("The number of total extensions: " + str(len(total_extensions)) + "\n" +
+                          "Of these imply three-way epistasis: " + str(imply_epistasis_total) + "\n" +
+                          "Of these imply positive three-way epistasis: " + str(len(imply_positive)) + "\n" +
+                          "Of these imply negative three-way epistasis: " + str(len(imply_negative)) + "\n\n")
 
 
 analyze_partial_orders("partial_orders.txt")
