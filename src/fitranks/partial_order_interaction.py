@@ -1,7 +1,6 @@
 import os.path
 from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative
 
-
 __author__ = "@gavruskin"
 
 
@@ -65,8 +64,34 @@ def partial_orders_from_file(file_name):
                     partial_order[i] = 8
             partial_order_formatted = []
             for i in range(0, len(partial_order), 2):
-                partial_order_formatted.append([partial_order[i], partial_order[i+1]])
+                partial_order_formatted.append([partial_order[i], partial_order[i + 1]])
             output.append(partial_order_formatted)
+    return output
+
+
+# Returns a string over {000, ..., 111} that corresponds to total_order (list) over {1, ..., 8} using
+# 000 = 1, 001 = 2, 010 = 3, 100 = 4, 011 = 5, 101 = 6, 110 = 7, 111 = 8
+def convert_to_genotype(total_order):
+    output = []
+    for rank in total_order:
+        if rank == 1:
+            output.append("000")
+        elif rank == 2:
+            output.append("001")
+        elif rank == 3:
+            output.append("010")
+        elif rank == 4:
+            output.append("100")
+        elif rank == 5:
+            output.append("011")
+        elif rank == 6:
+            output.append("101")
+        elif rank == 7:
+            output.append("110")
+        elif rank == 8:
+            output.append("111")
+    output = str(output)
+    output = output.replace("'", "")
     return output
 
 
@@ -76,11 +101,29 @@ def analyze_partial_orders(file_name, details=False):
         print "File partial_orders_analysis.txt already exists in directory 'outputs'. Please remove."
         return
     output_file = open("./outputs/partial_orders_analysis.txt", "w")
-    output_file.write("This file was created using...\n\n")  # TODO: Write this.
+    output_file.write("This file was created using Fitlands software package.\n"
+                      "Please refer to https://github.com/gavruskin/fitlands for legal matters, "
+                      "to obtain up-to-date bibliographic information for Fitlands, "
+                      "and to stay tuned.\n"
+                      "If you publish the results obtained with the help of this software, "
+                      "please don't forget to cite us.\n")
+    if details:
+        if os.path.isfile("./outputs/partial_orders_analysis_details.txt"):
+            print "File partial_orders_analysis_details.txt already exists in directory 'outputs'. Please remove."
+            return
+        output_file_details = open("./outputs/partial_orders_analysis_details.txt", "w")
+        output_file_details.write("This file was created using Fitlands software package.\n"
+                                  "Please refer to https://github.com/gavruskin/fitlands for legal matters, "
+                                  "to obtain up-to-date bibliographic information for Fitlands, "
+                                  "and to stay tuned.\n"
+                                  "If you publish the results obtained with the help of this software, "
+                                  "please don't forget to cite us.\n")
     partial_orders = partial_orders_from_file(file_name)
     for partial_order in partial_orders:
         partial_order_number = partial_orders.index(partial_order) + 1
-        output_file.write("\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
+        output_file.write("\n\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
+        if details:
+            output_file_details.write("\n\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
         total_extensions = all_total_extensions_brute_force(partial_order)
         imply_positive = []
         imply_negative = []
@@ -92,10 +135,40 @@ def analyze_partial_orders(file_name, details=False):
                                     repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
                 imply_negative.append(total_extension)
         imply_epistasis_total = len(imply_positive) + len(imply_negative)
-        output_file.write("The number of total extensions: " + str(len(total_extensions)) + "\n" +
-                          "Of these imply three-way epistasis: " + str(imply_epistasis_total) + "\n" +
-                          "Of these imply positive three-way epistasis: " + str(len(imply_positive)) + "\n" +
-                          "Of these imply negative three-way epistasis: " + str(len(imply_negative)) + "\n\n")
+        imply_epistasis_total_percent = 100 * imply_epistasis_total / float(len(total_extensions))
+        imply_positive_percent = 100 * len(imply_positive) / float(len(total_extensions))
+        imply_negative_percent = 100 * len(imply_negative) / float(len(total_extensions))
+        output_file.write("Number of total extensions: " + str(len(total_extensions)) + "\n" +
+                          "Imply three-way epistasis: " + str(imply_epistasis_total) +
+                          " (%s%%)\n" % round(imply_epistasis_total_percent, 2) +
+                          "Imply positive three-way epistasis: " + str(len(imply_positive)) +
+                          " (%s%%)\n" % round(imply_positive_percent, 2) +
+                          "Imply negative three-way epistasis: " + str(len(imply_negative)) +
+                          " (%s%%)\n" % round(imply_negative_percent, 2))
+        if details:
+            output_file_details.write("Number of total extensions: " + str(len(total_extensions)) + "\n" +
+                                      "Imply three-way epistasis: " + str(imply_epistasis_total) +
+                                      " (%s%%)\n" % round(imply_epistasis_total_percent, 2) +
+                                      "Imply positive three-way epistasis: " + str(len(imply_positive)) +
+                                      " (%s%%)\n" % round(imply_positive_percent, 2) +
+                                      "Imply negative three-way epistasis: " + str(len(imply_negative)) +
+                                      " (%s%%)\n" % round(imply_negative_percent, 2) + "\n" +
+                                      "List of total extensions with three-way epistasis signs:\n\n")
+            for total_extension in total_extensions:
+                output_file_details.write(convert_to_genotype(total_extension))
+                if epistasis_positive(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
+                                      repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
+                    output_file_details.write("  +\n")
+                elif epistasis_negative(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
+                                        repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
+                    output_file_details.write("  -\n")
+                else:
+                    output_file_details.write(" +/-\n")
+    output_file.write("\n")
+    output_file.close()
+    if details:
+        output_file_details.write("\n")
+        output_file_details.close()
 
 
-analyze_partial_orders("partial_orders.txt")
+analyze_partial_orders("partial_orders.txt", True)
