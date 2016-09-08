@@ -1,4 +1,5 @@
-import os.path, sys
+import os.path
+import sys
 from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative
 
 __author__ = "@gavruskin"
@@ -30,6 +31,28 @@ def all_total_extensions_brute_force(graph):
     return output
 
 
+def genotype_to_index(genotype):
+    if genotype == 0:
+        return 1
+    elif genotype == 1:
+        return 2
+    elif genotype == 10:
+        return 3
+    elif genotype == 100:
+        return 4
+    elif genotype == 11:
+        return 5
+    elif genotype == 101:
+        return 6
+    elif genotype == 110:
+        return 7
+    elif genotype == 111:
+        return 8
+    else:
+        print "\ngenotype_to_index received a non-genotype as input"
+        sys.exit()
+
+
 # Returns a list of partial orders on the set {1, ..., 8} given a file with partial orders on the set {000, ..., 111}.
 # The convention is: 000 = 1, 001 = 2, 010 = 3, 100 = 4, 011 = 5, 101 = 6, 110 = 7, 111 = 8
 # (To be compatible with other functions.)
@@ -47,22 +70,7 @@ def partial_orders_from_file(file_name):
             line = line.replace(" ", "")
             partial_order = [int(s) for s in line.split(",")]
             for i in range(len(partial_order)):
-                if partial_order[i] == 0:
-                    partial_order[i] = 1
-                elif partial_order[i] == 1:
-                    partial_order[i] = 2
-                elif partial_order[i] == 10:
-                    partial_order[i] = 3
-                elif partial_order[i] == 100:
-                    partial_order[i] = 4
-                elif partial_order[i] == 11:
-                    partial_order[i] = 5
-                elif partial_order[i] == 101:
-                    partial_order[i] = 6
-                elif partial_order[i] == 110:
-                    partial_order[i] = 7
-                elif partial_order[i] == 111:
-                    partial_order[i] = 8
+                partial_order[i] = genotype_to_index(partial_order[i])
             partial_order_formatted = []
             for i in range(0, len(partial_order), 2):
                 partial_order_formatted.append([partial_order[i], partial_order[i + 1]])
@@ -178,6 +186,7 @@ def analyze_partial_orders(file_name, details=False):
         output_file_details.close()
 
 
+# For creating a nice formula for the output file:
 def get_circuit_formula(positives, negatives, repetitions):
     circuit = ""
     if 1 in positives:
@@ -269,12 +278,25 @@ def get_circuit_formula(positives, negatives, repetitions):
 # u_111 (three-way epistasis), which is the default option.
 # Hence, with defaults the behavior is identical to analyze_partial_orders.
 #
+# Example of usage:
+# analyze_partial_orders_for_circuit("partial_orders.md", True, {0, 11}, {1, 10})
+#
 # The reason to keep both analyze_partial_orders and analyze_partial_orders_for_circuit is that the former should be
 # more efficient, but that has to be tested.
 def analyze_partial_orders_for_circuit(file_name, details=False,
-                                       positives={1, 5, 6, 7}, negatives={4, 3, 2, 8}, repetitions=None):
+                                       positives=None, negatives=None, repetitions=None):
     if repetitions is None:
         repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
+    else:
+        repetitions[3], repetitions[4] = repetitions[4], repetitions[3]
+    if positives is None:
+        positives = {1, 5, 6, 7}
+    else:
+        positives = {genotype_to_index(i) for i in positives}
+    if negatives is None:
+        negatives = {4, 3, 2, 8}
+    else:
+        negatives = {genotype_to_index(i) for i in negatives}
     partial_orders = partial_orders_from_file(file_name)
     if os.path.isfile("./outputs/partial_orders_analysis.md"):
         print "\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove."
@@ -348,3 +370,6 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
     if details:
         output_file_details.write("\n")
         output_file_details.close()
+
+
+analyze_partial_orders_for_circuit("partial_orders.md", True, {0, 11}, {1, 10})

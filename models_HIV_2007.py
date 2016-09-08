@@ -158,6 +158,7 @@ def closest_to_mean(fit_data_list, k, mean_type="mean"):
     return output
 
 
+# Returns the list of lists of fitness values for the eight genotypes corresponding to the hard-coded mutations:
 def datafile_hiv_process():
     data_file = "2007_HIV_data.csv"
     mutations = [["L", "M"],  # mutations: L to M, M to V, t to Y
@@ -202,7 +203,3 @@ def datafile_hiv_process():
                 (values.iloc[m, 4] == mutations[2][1]):
             f111.append(values.iloc[m, 0])
     return [f000, f001, f010, f100, f011, f101, f110, f111]
-#
-#
-# f = datafile_hiv_process()
-# epistasis_probability_from_comparisons(f, 0.000002)
