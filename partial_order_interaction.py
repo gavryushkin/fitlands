@@ -186,7 +186,7 @@ def analyze_partial_orders(file_name, details=False):
         output_file_details.close()
 
 
-# For creating a nice formula for the output file:
+# Creates a nice formula for the output file:
 def get_circuit_formula(positives, negatives, repetitions):
     circuit = ""
     if 1 in positives:
@@ -370,6 +370,3 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
     if details:
         output_file_details.write("\n")
         output_file_details.close()
-
-
-analyze_partial_orders_for_circuit("partial_orders.md", True, {0, 11}, {1, 10})
