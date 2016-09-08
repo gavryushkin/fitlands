@@ -104,6 +104,7 @@ def convert_to_genotype(total_order):
 # The second contains the lists of those orders. Takes more time to produce than only the numbers.
 # If 'details' == False, only the first file is returned. More efficient.
 def analyze_partial_orders(file_name, details=False):
+    partial_orders = partial_orders_from_file(file_name)
     if os.path.isfile("./outputs/partial_orders_analysis.md"):
         print "\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove."
         sys.exit()
@@ -125,7 +126,6 @@ def analyze_partial_orders(file_name, details=False):
                                   "and to stay tuned.\n"
                                   "If you publish the results obtained with the help of this software, "
                                   "please don't forget to cite us.\n")
-    partial_orders = partial_orders_from_file(file_name)
     for partial_order in partial_orders:
         partial_order_number = partial_orders.index(partial_order) + 1
         output_file.write("\n\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
@@ -275,6 +275,7 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
                                        positives={1, 5, 6, 7}, negatives={4, 3, 2, 8}, repetitions=None):
     if repetitions is None:
         repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
+    partial_orders = partial_orders_from_file(file_name)
     if os.path.isfile("./outputs/partial_orders_analysis.md"):
         print "\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove."
         sys.exit()
@@ -299,7 +300,6 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
                                   "If you publish the results obtained with the help of this software, "
                                   "please don't forget to cite us.\n")
         output_file_details.write("\n\n# Analysis of circuit epistasis\ncircuit = " + circuit + "\n")
-    partial_orders = partial_orders_from_file(file_name)
     for partial_order in partial_orders:
         partial_order_number = partial_orders.index(partial_order) + 1
         output_file.write("\n\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
