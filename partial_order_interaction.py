@@ -417,8 +417,10 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
     interaction_percent = 100 * interaction_total / float(24)
     imply_positive_percent = 100 * len(imply_positive) / float(24)
     imply_negative_percent = 100 * len(imply_negative) / float(24)
-    output_file.write("\n\n# Analysis of circuit interactions for all 24 circuits\n\n"
-                      "The rank order: %s\n\n" % convert_to_genotype(total_order))
+    output_file.write("\n\n# Analysis of circuit interactions for all 24 circuits\n"
+                      "The three-way interaction corresponds to the last circuit:\n"
+                      "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)\n\n"
+                      "Rank order: %s\n\n" % convert_to_genotype(total_order))
     output_file.write("The number of circuits for which the rank order implies circuit interaction: %s (%s%%)\n"
                       % (interaction_total, round(interaction_percent, 2)))
     output_file.write("The number of circuits for which the rank order implies *positive* circuit interaction: "

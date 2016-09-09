@@ -1,9 +1,15 @@
-from circuit_epistasis import get_repetitions_from_circuit_number
-from partial_order_interaction import analyze_partial_orders_for_circuit
+from models_wilcoxon import rank_sum
+from models_HIV_2007 import datafile_hiv_process
+from partial_order_interaction import analyze_total_order_for_all_circuits, convert_to_genotype
 
 
 __author__ = "@gavruskin"
 
 
-for circuit in range(24):
-    pass
+data = datafile_hiv_process()
+ranking = rank_sum(data)
+print "\nThe rank order is\n" + convert_to_genotype(ranking) + "\n"
+analyze_total_order_for_all_circuits(ranking, False)
+print "The output has been writen to file total_order_analysis_for_all_circuits.md located in the directory ./outputs\n"
+print "The three-way interaction corresponds to the last circuit:\n" \
+      "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)"

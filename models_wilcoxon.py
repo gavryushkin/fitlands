@@ -16,13 +16,4 @@ def rank_sum(measurements):
             if ranksums(measurements[output[i] - 1], measurements[output[i + 1] - 1])[0] < 0:
                 output[i], output[i+1] = output[i+1], output[i]
                 done = False
-    for i in range(len(measurements) - 1):
-        print ranksums(measurements[output[i] - 1], measurements[output[i + 1] - 1])
     return output
-
-
-# Produce the ranking:
-f = datafile_hiv_process()
-rs = rank_sum(f)
-print
-print convert_to_genotype(rs)
