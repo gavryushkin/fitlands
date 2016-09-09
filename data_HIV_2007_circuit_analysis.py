@@ -6,6 +6,9 @@ from partial_order_interaction import analyze_total_order_for_all_circuits, conv
 __author__ = "@gavruskin"
 
 
+# This script process the file 2007_HIV_data.csv, which must be inside the working directory,
+# returns the rank order supported by the data in the file (restricted to the three loci---see models_HIV_2007),
+# and for each of the 24 circuits, analyzes the circuit interaction implied by the rank order.
 data = datafile_hiv_process()
 ranking = rank_sum(data)
 print "\nThe rank order is\n" + convert_to_genotype(ranking) + "\n"
