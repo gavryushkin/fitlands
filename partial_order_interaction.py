@@ -382,8 +382,11 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
     return
 
 
+# Takes total_order as an input in the genotype format, e.g. {0, 11, 101} if genotype_format == True, or
+# in index format, e.g. {1, 5, 6}, otherwise.
+# Returns a file with the analysis of interactions implied by the rank order total_order for all 24 circuits.
 def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
-    if not genotype_format:
+    if genotype_format:
         total_order = [genotype_to_index(i) for i in total_order]
     if os.path.isfile("./outputs/total_order_analysis_for_all_circuits.md"):
         print "\nFile total_orders_analysis.md already exists in directory 'outputs'. Please remove."
@@ -418,22 +421,29 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
                       "The rank order: %s\n\n" % convert_to_genotype(total_order))
     output_file.write("The number of circuits for which the rank order implies circuit interaction: %s (%s%%)\n"
                       % (interaction_total, round(interaction_percent, 2)))
-    output_file.write("The number of circuits for which the rank order implies positive circuit interaction: "
+    output_file.write("The number of circuits for which the rank order implies *positive* circuit interaction: "
                       "%s (%s%%)\n"
                       % (len(imply_positive), round(imply_positive_percent, 2)))
-    output_file.write("The number of circuits for which the rank order implies negative circuit interaction: "
+    output_file.write("The number of circuits for which the rank order implies *negative* circuit interaction: "
                       "%s (%s%%)\n"
                       % (len(imply_negative), round(imply_negative_percent, 2)))
+    output_file.write("\n\n## List of circuits for which the rank order implies *positive* interaction\n\n")
+    for circuit in imply_positive:
+        output_file.write("{0}\n".format(circuit))
+    output_file.write("\n\n## List of circuits for which the rank order implies *negative* interaction\n\n")
+    for circuit in imply_negative:
+        output_file.write("{0}\n".format(circuit))
     output_file.write("\n\n## List of circuits followed by the interaction sign implied by the rank order\n\n")
     for circuit in circuits:
         if circuit in imply_positive:
-            output_file.write(circuit + " +\n")
+            output_file.write("{0}  +\n".format(circuit))
         elif circuit in imply_negative:
-            output_file.write(circuit + " -\n")
+            output_file.write("{0}  -\n".format(circuit))
         else:
-            output_file.write(circuit + " +/-\n")
+            output_file.write("{0}  +/-\n".format(circuit))
+    output_file.write("\n")
     output_file.close()
     return
 
 
-analyze_total_order_for_all_circuits([0, 100, 11, 110, 101, 1, 10, 111], False)
+analyze_total_order_for_all_circuits([0, 11, 110, 101, 1, 10, 111, 100])
