@@ -239,7 +239,7 @@ def get_circuit_formula(positives, negatives, repetitions):
             circuit += "+ w(011) "
     elif 5 in negatives:
         if repetitions[4] > 1:
-            circuit += "1 %sw(011) " % repetitions[4]
+            circuit += "- %sw(011) " % repetitions[4]
         elif repetitions[4] == 1:
             circuit += "- w(011) "
     if 6 in positives:
