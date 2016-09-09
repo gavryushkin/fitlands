@@ -444,6 +444,3 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
     output_file.write("\n")
     output_file.close()
     return
-
-
-analyze_total_order_for_all_circuits([0, 11, 110, 101, 1, 10, 111, 100])
