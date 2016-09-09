@@ -1,6 +1,7 @@
 import os.path
 import sys
 from three_way_epistasis import get_next_ordering, ordering_to_fitness, epistasis_positive, epistasis_negative
+from circuit_epistasis import get_repetitions_from_circuit_number, get_positives_list, get_negatives_list
 
 __author__ = "@gavruskin"
 
@@ -75,6 +76,7 @@ def partial_orders_from_file(file_name):
             for i in range(0, len(partial_order), 2):
                 partial_order_formatted.append([partial_order[i], partial_order[i + 1]])
             output.append(partial_order_formatted)
+    partial_orders_file.close()
     return output
 
 
@@ -154,21 +156,21 @@ def analyze_partial_orders(file_name, details=False):
         imply_positive_percent = 100 * len(imply_positive) / float(len(total_extensions))
         imply_negative_percent = 100 * len(imply_negative) / float(len(total_extensions))
         output_file.write("Number of total extensions: " + str(len(total_extensions)) + "\n" +
-                          "Imply three-way epistasis: " + str(imply_epistasis_total) +
+                          "Imply three-way interaction: " + str(imply_epistasis_total) +
                           " (%s%%)\n" % round(imply_epistasis_total_percent, 2) +
-                          "Imply positive three-way epistasis: " + str(len(imply_positive)) +
+                          "Imply positive three-way interaction: " + str(len(imply_positive)) +
                           " (%s%%)\n" % round(imply_positive_percent, 2) +
-                          "Imply negative three-way epistasis: " + str(len(imply_negative)) +
+                          "Imply negative three-way interaction: " + str(len(imply_negative)) +
                           " (%s%%)\n" % round(imply_negative_percent, 2))
         if details:
             output_file_details.write("Number of total extensions: " + str(len(total_extensions)) + "\n" +
-                                      "Imply three-way epistasis: " + str(imply_epistasis_total) +
+                                      "Imply three-way interaction: " + str(imply_epistasis_total) +
                                       " (%s%%)\n" % round(imply_epistasis_total_percent, 2) +
-                                      "Imply positive three-way epistasis: " + str(len(imply_positive)) +
+                                      "Imply positive three-way interaction: " + str(len(imply_positive)) +
                                       " (%s%%)\n" % round(imply_positive_percent, 2) +
-                                      "Imply negative three-way epistasis: " + str(len(imply_negative)) +
+                                      "Imply negative three-way interaction: " + str(len(imply_negative)) +
                                       " (%s%%)\n" % round(imply_negative_percent, 2) + "\n" +
-                                      "List of total extensions followed by three-way epistasis signs:\n\n")
+                                      "List of total extensions followed by three-way interaction signs:\n\n")
             for total_extension in total_extensions:
                 output_file_details.write(convert_to_genotype(total_extension))
                 if epistasis_positive(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
@@ -184,6 +186,7 @@ def analyze_partial_orders(file_name, details=False):
     if details:
         output_file_details.write("\n")
         output_file_details.close()
+    return
 
 
 # Creates a nice formula for the output file:
@@ -271,6 +274,10 @@ def get_circuit_formula(positives, negatives, repetitions):
             circuit += "- w(111)"
     if circuit[1] == " ":
         circuit = circuit[0] + circuit[2:]
+    if circuit[0] == "+":
+        circuit = circuit[1:]
+    while circuit[len(circuit) - 1] == " ":
+        circuit = circuit[:len(circuit) - 1]
     return circuit
 
 
@@ -311,7 +318,7 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
                       "If you publish the results obtained with the help of this software, "
                       "please don't forget to cite us.\n")
     circuit = get_circuit_formula(positives, negatives, repetitions)
-    output_file.write("\n\n# Analysis of circuit epistasis\ncircuit = " + circuit + "\n")
+    output_file.write("\n\n# Analysis of circuit interaction\ncircuit = " + circuit + "\n")
     if details:
         if os.path.isfile("./outputs/partial_orders_analysis_details.md"):
             print "\nFile partial_orders_analysis_details.md already exists in directory 'outputs'. Please remove."
@@ -323,7 +330,7 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
                                   "and to stay tuned.\n"
                                   "If you publish the results obtained with the help of this software, "
                                   "please don't forget to cite us.\n")
-        output_file_details.write("\n\n# Analysis of circuit epistasis\ncircuit = " + circuit + "\n")
+        output_file_details.write("\n\n# Analysis of circuit interaction\ncircuit = " + circuit + "\n")
     for partial_order in partial_orders:
         partial_order_number = partial_orders.index(partial_order) + 1
         output_file.write("\n\n## Analysis of partial order number " + str(partial_order_number) + "\n\n")
@@ -342,21 +349,21 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
         imply_positive_percent = 100 * len(imply_positive) / float(len(total_extensions))
         imply_negative_percent = 100 * len(imply_negative) / float(len(total_extensions))
         output_file.write("Number of total extensions: " + str(len(total_extensions)) + "\n" +
-                          "Imply circuit epistasis: " + str(imply_epistasis_total) +
+                          "Imply circuit interaction: " + str(imply_epistasis_total) +
                           " (%s%%)\n" % round(imply_epistasis_total_percent, 2) +
-                          "Imply positive circuit epistasis: " + str(len(imply_positive)) +
+                          "Imply positive circuit interaction: " + str(len(imply_positive)) +
                           " (%s%%)\n" % round(imply_positive_percent, 2) +
-                          "Imply negative circuit epistasis: " + str(len(imply_negative)) +
+                          "Imply negative circuit interaction: " + str(len(imply_negative)) +
                           " (%s%%)\n" % round(imply_negative_percent, 2))
         if details:
             output_file_details.write("Number of total extensions: " + str(len(total_extensions)) + "\n" +
-                                      "Imply circuit epistasis: " + str(imply_epistasis_total) +
+                                      "Imply circuit interaction: " + str(imply_epistasis_total) +
                                       " (%s%%)\n" % round(imply_epistasis_total_percent, 2) +
-                                      "Imply positive circuit epistasis: " + str(len(imply_positive)) +
+                                      "Imply positive circuit interaction: " + str(len(imply_positive)) +
                                       " (%s%%)\n" % round(imply_positive_percent, 2) +
-                                      "Imply negative circuit epistasis: " + str(len(imply_negative)) +
+                                      "Imply negative circuit interaction: " + str(len(imply_negative)) +
                                       " (%s%%)\n" % round(imply_negative_percent, 2) + "\n" +
-                                      "List of total extensions followed by circuit epistasis signs:\n\n")
+                                      "List of total extensions followed by circuit interaction signs:\n\n")
             for total_extension in total_extensions:
                 output_file_details.write(convert_to_genotype(total_extension))
                 if epistasis_positive(total_extension, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8},
@@ -372,3 +379,61 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
     if details:
         output_file_details.write("\n")
         output_file_details.close()
+    return
+
+
+def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
+    if not genotype_format:
+        total_order = [genotype_to_index(i) for i in total_order]
+    if os.path.isfile("./outputs/total_order_analysis_for_all_circuits.md"):
+        print "\nFile total_orders_analysis.md already exists in directory 'outputs'. Please remove."
+        sys.exit()
+    output_file = open("./outputs/total_order_analysis_for_all_circuits.md", "w")
+    output_file.write("This file was created using software package Fitlands.\n"
+                      "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
+                      "to obtain up-to-date bibliographic information for Fitlands, "
+                      "and to stay tuned.\n"
+                      "If you publish the results obtained with the help of this software, "
+                      "please don't forget to cite us.\n")
+    positives_list = get_positives_list()
+    negatives_list = get_negatives_list()
+    imply_positive = []
+    imply_negative = []
+    circuits = []
+    for circuit_number in range(24):
+        positives = positives_list[circuit_number]
+        negatives = negatives_list[circuit_number]
+        repetitions = get_repetitions_from_circuit_number(circuit_number + 1)
+        circuit = get_circuit_formula(positives, negatives, repetitions)
+        circuits.append(circuit)
+        if epistasis_positive(total_order, positives, negatives, repetitions):
+            imply_positive.append(circuit)
+        elif epistasis_negative(total_order, positives, negatives, repetitions):
+            imply_negative.append(circuit)
+    interaction_total = len(imply_positive) + len(imply_negative)
+    interaction_percent = 100 * interaction_total / float(24)
+    imply_positive_percent = 100 * len(imply_positive) / float(24)
+    imply_negative_percent = 100 * len(imply_negative) / float(24)
+    output_file.write("\n\n# Analysis of circuit interactions for all 24 circuits\n\n"
+                      "The rank order: %s\n\n" % convert_to_genotype(total_order))
+    output_file.write("The number of circuits for which the rank order implies circuit interaction: %s (%s%%)\n"
+                      % (interaction_total, round(interaction_percent, 2)))
+    output_file.write("The number of circuits for which the rank order implies positive circuit interaction: "
+                      "%s (%s%%)\n"
+                      % (len(imply_positive), round(imply_positive_percent, 2)))
+    output_file.write("The number of circuits for which the rank order implies negative circuit interaction: "
+                      "%s (%s%%)\n"
+                      % (len(imply_negative), round(imply_negative_percent, 2)))
+    output_file.write("\n\n## List of circuits followed by the interaction sign implied by the rank order\n\n")
+    for circuit in circuits:
+        if circuit in imply_positive:
+            output_file.write(circuit + " +\n")
+        elif circuit in imply_negative:
+            output_file.write(circuit + " -\n")
+        else:
+            output_file.write(circuit + " +/-\n")
+    output_file.close()
+    return
+
+
+analyze_total_order_for_all_circuits([0, 100, 11, 110, 101, 1, 10, 111], False)

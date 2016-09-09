@@ -1,58 +1,60 @@
 from three_way_epistasis import list_epistasis, list_epistasis_signed, get_next_ordering, ordering_to_fitness
 
-
 __author__ = "@gavruskin"
 
 
-positives_list = [{1, 7},  # 1
-                  {2, 8},  # 2
-                  {1, 6},  # 3
-                  {3, 8},  # 4
-                  {1, 5},  # 5
-                  {4, 8},  # 6
-                  {1, 8},  # 7
-                  {2, 7},  # 8
-                  {1, 8},  # 9
-                  {2, 7},  # 10
-                  {1, 8},  # 11
-                  {3, 6},  # 12
-                  {2, 3, 4},  # 13
-                  {5, 6, 7},  # 14
-                  {3, 4, 8},  # 15
-                  {1, 5, 6},  # 16
-                  {2, 4, 8},  # 17
-                  {1, 5, 7},  # 18
-                  {1, 6, 7},  # 19
-                  {2, 3, 8},  # 20
-                  {1, 4, 5, 8},  # 21
-                  {1, 3, 6, 8},  # 22
-                  {1, 2, 7, 8},  # 23
-                  {1, 5, 6, 7}]  # 24
+def get_positives_list():
+    return [{1, 7},  # 1
+            {2, 8},  # 2
+            {1, 6},  # 3
+            {3, 8},  # 4
+            {1, 5},  # 5
+            {4, 8},  # 6
+            {1, 8},  # 7
+            {2, 7},  # 8
+            {1, 8},  # 9
+            {2, 7},  # 10
+            {1, 8},  # 11
+            {3, 6},  # 12
+            {2, 3, 4},  # 13
+            {5, 6, 7},  # 14
+            {3, 4, 8},  # 15
+            {1, 5, 6},  # 16
+            {2, 4, 8},  # 17
+            {1, 5, 7},  # 18
+            {1, 6, 7},  # 19
+            {2, 3, 8},  # 20
+            {1, 4, 5, 8},  # 21
+            {1, 3, 6, 8},  # 22
+            {1, 2, 7, 8},  # 23
+            {1, 5, 6, 7}]  # 24
 
-negatives_list = [{3, 4},  # 1
-                  {5, 6},  # 2
-                  {2, 4},  # 3
-                  {5, 7},  # 4
-                  {2, 3},  # 5
-                  {6, 7},  # 6
-                  {5, 4},  # 7
-                  {3, 6},  # 8
-                  {3, 6},  # 9
-                  {5, 4},  # 10
-                  {2, 7},  # 11
-                  {5, 4},  # 12
-                  {8, 1},  # 13
-                  {1, 8},  # 14
-                  {2, 7},  # 15
-                  {7, 2},  # 16
-                  {3, 6},  # 17
-                  {6, 3},  # 18
-                  {5, 4},  # 19
-                  {4, 5},  # 20
-                  {2, 6, 3, 7},  # 21
-                  {2, 5, 4, 7},  # 22
-                  {3, 5, 4, 6},  # 23
-                  {4, 3, 2, 8}]  # 24
+
+def get_negatives_list():
+    return [{3, 4},  # 1
+            {5, 6},  # 2
+            {2, 4},  # 3
+            {5, 7},  # 4
+            {2, 3},  # 5
+            {6, 7},  # 6
+            {5, 4},  # 7
+            {3, 6},  # 8
+            {3, 6},  # 9
+            {5, 4},  # 10
+            {2, 7},  # 11
+            {5, 4},  # 12
+            {8, 1},  # 13
+            {1, 8},  # 14
+            {2, 7},  # 15
+            {7, 2},  # 16
+            {3, 6},  # 17
+            {6, 3},  # 18
+            {5, 4},  # 19
+            {4, 5},  # 20
+            {2, 6, 3, 7},  # 21
+            {2, 5, 4, 7},  # 22
+            {3, 5, 4, 6},  # 23
+            {4, 3, 2, 8}]  # 24
 
 
 # Returns the list of coefficients that corresponds to circuit number n from {1, ..., 24}.
@@ -80,6 +82,8 @@ def get_repetitions_from_circuit_number(n):
 
 # For every circuit, generates a file that contains orders that imply epistasis.
 def orders_to_circuits():
+    positives_list = get_positives_list()
+    negatives_list = get_negatives_list()
     for shape_number in range(len(positives_list)):
         shape_name = shape_number + 1
         if shape_name == 21:
@@ -181,7 +185,6 @@ def circuits_to_orders_signed():
             elif line_negative in open("./outputs/circuit_%s_orders_signed.txt" % circuit, "r"):
                 circuits_to_orders_file.write("-" + str(circuit) + " ")
     circuits_to_orders_file.close()
-
 
 # To generate the big file, call:
 # orders_to_circuits()
