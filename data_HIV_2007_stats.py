@@ -27,7 +27,9 @@ maxim = [2.0530, 1.7850, 1.5310, 1.8750, 1.7240, 1.8870, 1.6920, 1.7900]
 # check_for_epistasis(minim)
 
 
-def get_mean_fitness(data_file, mutations, sites, mean_type=""):
+def get_mean_fitness(data_file, mutations, sites, mean_type=""):  # Default mean_type returns all possible combinations
+    # of fitness values for the fist n values where n is the min number of fitness measurements over all genotypes.
+    # This should not be used!
     sites = [0] + sites  # This is specific to the data file. Column 0 contains fitness, column 1 names.
     values = pandas.read_csv(data_file, usecols=sites)
     values.iloc[:, 0] = numpy.log10(values.iloc[:, 0])
@@ -91,16 +93,6 @@ def get_mean_fitness(data_file, mutations, sites, mean_type=""):
              numpy.percentile(f100, 75), numpy.percentile(f011, 75), numpy.percentile(f101, 75),
              numpy.percentile(f110, 75), numpy.percentile(f111, 75)]
         return w
-
-    # TODO: Get rid of the following testing piece:
-    # print "Count for 000: " + str(len(f000))
-    # print "Count for 001: " + str(len(f001))
-    # print "Count for 010: " + str(len(f010))
-    # print "Count for 100: " + str(len(f100))
-    # print "Count for 011: " + str(len(f011))
-    # print "Count for 101: " + str(len(f101))
-    # print "Count for 110: " + str(len(f110))
-    # print "Count for 111: " + str(len(f111))
     f_min_length = min(len(f000), len(f001), len(f010), len(f100), len(f011), len(f101), len(f110), len(f111))
     f000_sorted = sorted(f000)
     f000_sorted = f000_sorted[0:f_min_length]
@@ -152,16 +144,3 @@ for ranking in list_with_five_variants:
         non_informative_num += 1
 analysis_output = [positive_epi_num, negative_epi_num, non_informative_num, total_num_genotypes]
 print analysis_output
-
-
-# epi_count = 0
-# for k in range(4, 281):
-#     for j in range(3, k):
-#         for i in range(2, j):
-#             running_sites = [i, j, k]
-#             running_mean = get_mean_fitness(HIV_data_file, running_sites)
-#             epi = check_for_epistasis(running_mean)
-#             if epi[0] or epi[1]:
-#                 epi_count += 1
-#                 print epi_count
-#                 print running_sites
