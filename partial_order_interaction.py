@@ -277,6 +277,8 @@ def get_circuit_formula(positives, negatives, repetitions):
 # Does the same things as analyze_partial_orders but with respect to the given circuit instead of the plain
 # u_111 (three-way epistasis), which is the default option.
 # Hence, with defaults the behavior is identical to analyze_partial_orders.
+# If genotype_format is True (default), positives and negatives are taken in {0, 11, 101} format,
+# otherwise---in index format: {1, 5, 6}.
 #
 # Example of usage:
 # analyze_partial_orders_for_circuit("partial_orders.md", True, {0, 11}, {1, 10})
@@ -284,18 +286,18 @@ def get_circuit_formula(positives, negatives, repetitions):
 # The reason to keep both analyze_partial_orders and analyze_partial_orders_for_circuit is that the former should be
 # more efficient, but that has to be tested.
 def analyze_partial_orders_for_circuit(file_name, details=False,
-                                       positives=None, negatives=None, repetitions=None):
+                                       positives=None, negatives=None, repetitions=None, genotype_format=True):
     if repetitions is None:
         repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
     else:
         repetitions[3], repetitions[4] = repetitions[4], repetitions[3]
     if positives is None:
         positives = {1, 5, 6, 7}
-    else:
+    elif genotype_format:
         positives = {genotype_to_index(i) for i in positives}
     if negatives is None:
         negatives = {4, 3, 2, 8}
-    else:
+    elif genotype_format:
         negatives = {genotype_to_index(i) for i in negatives}
     partial_orders = partial_orders_from_file(file_name)
     if os.path.isfile("./outputs/partial_orders_analysis.md"):
