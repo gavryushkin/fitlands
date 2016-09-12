@@ -133,3 +133,4 @@ __pycache__
 *#
 
 *.md
+.ipynb_checkpoints/
