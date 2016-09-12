@@ -38,11 +38,11 @@ def simulate_competition_experiment_from_hiv_data():
                numpy.mean(f[4]), numpy.mean(f[5]), numpy.mean(f[6]), numpy.mean(f[7])]
     mean_f0 = numpy.mean(f[0])
     f_means_shifted = numpy.subtract(f_means, [mean_f0, mean_f0, mean_f0, mean_f0, mean_f0, mean_f0, mean_f0, mean_f0])
-    print f_means
-    print f_means_shifted
+    print(f_means)
+    print(f_means_shifted)
     rankings = sample_ranks_randomly(f, 1000)
     for s in range(len(rankings)):
-        print rankings[s]
+        print(rankings[s])
 
 
 def get_epistasis_from_top_10_maxlik_rankings():
@@ -60,7 +60,7 @@ def get_epistasis_from_top_10_maxlik_rankings():
     negatives = {4, 3, 2, 8}
     repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
     for i in range(len(g)):
-        print g[i]
-        print "Positive epistasis: " + str(epistasis_positive(g[i], positives, negatives, repetitions))
-        print "Negative epistasis: " + str(epistasis_negative(g[i], positives, negatives, repetitions))
+        print(g[i])
+        print("Positive epistasis: " + str(epistasis_positive(g[i], positives, negatives, repetitions)))
+        print("Negative epistasis: " + str(epistasis_negative(g[i], positives, negatives, repetitions)))
         print

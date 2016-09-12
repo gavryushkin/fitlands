@@ -22,10 +22,10 @@ def check_for_epistasis_four_way(v, details=False):
     output = [epi_pos, epi_neg]
     if details:
         epi = epi_neg or epi_pos
-        print numpy.round(v, 3)
-        print numpy.round(v_sorted, 3)
-        print w
-        print epi
-        print output
+        print(numpy.round(v, 3))
+        print(numpy.round(v_sorted, 3))
+        print(w)
+        print(epi)
+        print(output)
         print
     return output

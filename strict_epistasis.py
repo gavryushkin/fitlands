@@ -19,10 +19,10 @@ def print_node(node):
     for edge in node.edges:
         edges.append(edge.name)
     edges.sort()
-    print "Name: " + str(node.name)
-    print "Edges: " + str(edges)
-    print "Head: " + str(node.head)
-    print "Tail: " + str(node.tail) + "\n"
+    print("Name: " + str(node.name))
+    print("Edges: " + str(edges))
+    print("Head: " + str(node.head))
+    print("Tail: " + str(node.tail) + "\n")
 
 
 # Convert a graph given as an edge list to a graph given as a linked list of nodes:
@@ -92,8 +92,8 @@ def strict_epistasis():
             unique_graphs.append(new_graph)
             if strict_epistasis_for_graph(new_graph):
                 output.append(new_graph)
-                print str(new_graph)  # TODO: print to file?
+                print(str(new_graph))  # TODO: print to file?
     ranks_file.close()
-    print "\nThe number of graphs that have a strict epistasis is " + str(len(output))
-    print "The number of graphs that have an epistasis is " + str(len(graphs))
+    print("\nThe number of graphs that have a strict epistasis is " + str(len(output)))
+    print("The number of graphs that have an epistasis is " + str(len(graphs)))
     return output

@@ -11,8 +11,9 @@ __author__ = "@gavruskin"
 # and for each of the 24 circuits, analyzes the circuit interaction implied by the rank order.
 data = datafile_hiv_process()
 ranking = rank_sum(data)
-print "\nThe rank order is\n" + convert_to_genotype(ranking) + "\n"
+print("\nThe rank order is\n" + convert_to_genotype(ranking) + "\n")
 analyze_total_order_for_all_circuits(ranking, False)
-print "The output has been writen to file total_order_analysis_for_all_circuits.md located in the directory ./outputs\n"
-print "The three-way interaction corresponds to the last circuit:\n" \
-      "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)"
+print ("The output has been writen to"
+       "file total_order_analysis_for_all_circuits.md located in the directory ./outputs\n")
+print("The three-way interaction corresponds to the last circuit:\n" \
+      "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)")

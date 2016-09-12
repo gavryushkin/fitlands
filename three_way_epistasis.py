@@ -90,8 +90,8 @@ def list_epistasis(positives, negatives, circuit_name, repetitions):
             number += 1
             epi_ranks_file.write(str(fitness) + "\n")
     epi_ranks_file.close()
-    print "The total number of circuit %s epistases is " % circuit_name + str(number) + \
-          ". Their complete list has been written to circuit_%s_orders.txt" % circuit_name
+    print("The total number of circuit %s epistases is " % circuit_name + str(number) + \
+          ". Their complete list has been written to circuit_%s_orders.txt" % circuit_name)
 
 
 # Generates a file with the list of all rankings (followed by the sign) that imply epistasis for the given circuit.
@@ -118,9 +118,9 @@ def list_epistasis_signed(positives, negatives, circuit_name, repetitions):
             number_negative += 1
             epi_ranks_file.write(str(fitness) + " -" + "\n")
     epi_ranks_file.close()
-    print "The total number of circuit %s positive epistases is " % circuit_name + str(number_positive) + "."
-    print "The total number of circuit %s negative epistases is " % circuit_name + str(number_negative) + "."
-    print "Their complete list has been written to circuit_%s_orders.txt" % circuit_name
+    print("The total number of circuit %s positive epistases is " % circuit_name + str(number_positive) + ".")
+    print("The total number of circuit %s negative epistases is " % circuit_name + str(number_negative) + ".")
+    print("Their complete list has been written to circuit_%s_orders.txt" % circuit_name)
 
 
 # Returns a pair of truth values for positive and (then) negative epistasis
@@ -140,11 +140,11 @@ def check_for_epistasis(v, details=False):
     output = [epi_pos, epi_neg]
     if details:
         epi = epi_neg or epi_pos
-        print numpy.round(v, 3)
-        print numpy.round(v_sorted, 3)
-        print w
-        print epi
-        print output
+        print(numpy.round(v, 3))
+        print(numpy.round(v_sorted, 3))
+        print(w)
+        print(epi)
+        print(output)
         print
     return output
 
@@ -172,7 +172,7 @@ def write_epistasis_to_file_random_algorithm():
         epistasis_file.write("IMPORTANT: w_000 = w_1, w_001 = w_2, w_010 = w_3, w_100 = w_4, w_011 = w_5, w_101 = w_6,"
                              "w_110 = w_7, w_111 = w_8\n")
     else:
-        print "File epistasis.txt is not empty"
+        print("File epistasis.txt is not empty")
         return
     ordering = [1, 1, 1, 1, 1, 1, 1, 1]
     fitness = [1, 2, 3, 4, 5, 6, 7, 8]

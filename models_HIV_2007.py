@@ -98,16 +98,16 @@ def epistasis_probability_from_comparisons(fit_data_list, threshold_prob):
     top_non_info_prob = 0
     for i in range(len(non_informative_rankings)):
         top_non_info_prob += non_informative_rankings[i][1]
-    print "Threshold probability: " + str(threshold_prob)
-    print "Top rankings with positive epistasis: " + str(positive_rankings)
-    print str(len(positive_rankings)) + " in total"
-    print "With total probability: " + str(top_pos_epi_prob)
-    print "Top rankings with negative epistasis: " + str(negative_rankings)
-    print str(len(negative_rankings)) + " in total"
-    print "With total probability: " + str(top_neg_epi_prob)
-    print "Top non-informative rankings: " + str(non_informative_rankings)
-    print str(len(non_informative_rankings)) + " in total"
-    print "With total probability: " + str(top_non_info_prob) + "\n"
+    print("Threshold probability: " + str(threshold_prob))
+    print("Top rankings with positive epistasis: " + str(positive_rankings))
+    print(str(len(positive_rankings)) + " in total")
+    print("With total probability: " + str(top_pos_epi_prob))
+    print("Top rankings with negative epistasis: " + str(negative_rankings))
+    print(str(len(negative_rankings)) + " in total")
+    print("With total probability: " + str(top_neg_epi_prob))
+    print("Top non-informative rankings: " + str(non_informative_rankings))
+    print(str(len(non_informative_rankings)) + " in total")
+    print("With total probability: " + str(top_non_info_prob) + "\n")
     return [[positive_epi_prob, negative_epi_prob],
             [positive_rankings, negative_rankings, non_informative_rankings]]
 

@@ -50,7 +50,7 @@ def genotype_to_index(genotype):
     elif genotype == 111:
         return 8
     else:
-        print "\ngenotype_to_index received a non-genotype as input"
+        print("\ngenotype_to_index received a non-genotype as input")
         sys.exit()
 
 
@@ -59,8 +59,8 @@ def genotype_to_index(genotype):
 # (To be compatible with other functions.)
 def partial_orders_from_file(file_name):
     if not os.path.isfile("./outputs/%s" % file_name):
-        print "\nPlease put the file with partial orders into directory 'outputs' inside the working directory.\n" \
-              "Then, check that the script is called with the correctly spelled file name, including the extension."
+        print("\nPlease put the file with partial orders into directory 'outputs' inside the working directory.\n"
+              "Then, check that the script is called with the correctly spelled file name, including the extension.")
         sys.exit()
     partial_orders_file = open("./outputs/%s" % file_name, "r")
     output = []
@@ -116,7 +116,7 @@ def convert_to_genotype(total_order):
 def analyze_partial_orders(file_name, details=False):
     partial_orders = partial_orders_from_file(file_name)
     if os.path.isfile("./outputs/partial_orders_analysis.md"):
-        print "\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove."
+        print("\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/partial_orders_analysis.md", "w")
     output_file.write("This file was created using software package Fitlands.\n"
@@ -127,7 +127,8 @@ def analyze_partial_orders(file_name, details=False):
                       "please don't forget to cite us.\n")
     if details:
         if os.path.isfile("./outputs/partial_orders_analysis_details.md"):
-            print "\nFile partial_orders_analysis_details.md already exists in directory 'outputs'. Please remove."
+            print("\nFile partial_orders_analysis_details.md already exists in directory 'outputs'."
+                  "Please remove and rerun.")
             sys.exit()
         output_file_details = open("./outputs/partial_orders_analysis_details.md", "w")
         output_file_details.write("This file was created using software package Fitlands.\n"
@@ -308,7 +309,7 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
         negatives = {genotype_to_index(i) for i in negatives}
     partial_orders = partial_orders_from_file(file_name)
     if os.path.isfile("./outputs/partial_orders_analysis.md"):
-        print "\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove."
+        print("\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/partial_orders_analysis.md", "w")
     output_file.write("This file was created using software package Fitlands.\n"
@@ -321,7 +322,8 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
     output_file.write("\n\n# Analysis of circuit interaction\ncircuit = " + circuit + "\n")
     if details:
         if os.path.isfile("./outputs/partial_orders_analysis_details.md"):
-            print "\nFile partial_orders_analysis_details.md already exists in directory 'outputs'. Please remove."
+            print("\nFile partial_orders_analysis_details.md already exists in directory 'outputs'."
+                  "Please remove and rerun.")
             sys.exit()
         output_file_details = open("./outputs/partial_orders_analysis_details.md", "w")
         output_file_details.write("This file was created using software package Fitlands.\n"
@@ -389,7 +391,7 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
     if genotype_format:
         total_order = [genotype_to_index(i) for i in total_order]
     if os.path.isfile("./outputs/total_order_analysis_for_all_circuits.md"):
-        print "\nFile total_orders_analysis.md already exists in directory 'outputs'. Please remove."
+        print("\nFile total_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/total_order_analysis_for_all_circuits.md", "w")
     output_file.write("This file was created using software package Fitlands.\n"

@@ -143,4 +143,4 @@ for ranking in list_with_five_variants:
     elif not epi_pair[0] and not epi_pair[1]:
         non_informative_num += 1
 analysis_output = [positive_epi_num, negative_epi_num, non_informative_num, total_num_genotypes]
-print analysis_output
+print(analysis_output)
