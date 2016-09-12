@@ -63,4 +63,4 @@ def get_epistasis_from_top_10_maxlik_rankings():
         print(g[i])
         print("Positive epistasis: " + str(epistasis_positive(g[i], positives, negatives, repetitions)))
         print("Negative epistasis: " + str(epistasis_negative(g[i], positives, negatives, repetitions)))
-        print
+        print("\n")

@@ -1,5 +1,3 @@
-from models_HIV_2007 import datafile_hiv_process
-from partial_order_interaction import convert_to_genotype
 from scipy.stats import ranksums
 
 

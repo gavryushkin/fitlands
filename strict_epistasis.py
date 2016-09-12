@@ -72,7 +72,7 @@ def consistent_rankings(graph):
 def strict_epistasis_for_graph(graph):
     consistent_orders = consistent_rankings(graph)
     for order in consistent_orders:
-        if not epistasis(order):
+        if not epistasis(order, positives={1, 5, 6, 7}, negatives={4, 3, 2, 8}, repetitions=[1, 1, 1, 1, 1, 1, 1, 1]):
             return False
     return True
 

@@ -33,7 +33,7 @@ def get_mean_fitness(data_file, mutations, sites, mean_type=""):  # Default mean
     sites = [0] + sites  # This is specific to the data file. Column 0 contains fitness, column 1 names.
     values = pandas.read_csv(data_file, usecols=sites)
     values.iloc[:, 0] = numpy.log10(values.iloc[:, 0])
-    size = len(values.iloc[:,1])
+    size = len(values.iloc[:, 1])
     f000 = []
     f001 = []
     f010 = []

@@ -27,5 +27,5 @@ def check_for_epistasis_four_way(v, details=False):
         print(w)
         print(epi)
         print(output)
-        print
+        print("\n")
     return output
