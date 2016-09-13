@@ -134,3 +134,5 @@ __pycache__
 
 *.md
 .ipynb_checkpoints/
+*.xlsx
+*.csv
