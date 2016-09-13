@@ -19,4 +19,4 @@ def datafile_fly_bacteria_process(data_file):
 
 
 data = datafile_fly_bacteria_process("fly_bacteria_data.csv")
-print(rank_sum_n_sites(data))
+rank_sum_n_sites(data)

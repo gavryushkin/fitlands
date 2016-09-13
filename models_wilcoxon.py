@@ -1,9 +1,18 @@
 from scipy.stats import ranksums
 import math
 import sys
+import numpy
 
 
 __author__ = "@gavruskin"
+
+
+# Adds missing 0's in front the genotype to make it of length n.
+def genotype_look_good(genotype, n):
+    output = str(genotype)
+    for i in range(n - len(genotype)):
+        output = "0" + output
+    return output
 
 
 # Returns the ordering of vectors of measurements according to Wilcoxon rank-sum test:
@@ -41,4 +50,9 @@ def rank_sum_n_sites(measurements):
     output = []
     for index in output_indices:
         output.append(measurements.keys()[index])
+    for genotype in output:
+        print(genotype_look_good(genotype, 5))
+        fitness = measurements[genotype][1:]
+        print(str(numpy.mean(fitness)) + "\n")
+
     return output
