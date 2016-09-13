@@ -1,4 +1,4 @@
-from models_wilcoxon import rank_sum
+from models_wilcoxon import rank_sum_3_sites
 from models_HIV_2007 import datafile_hiv_process
 from partial_order_interaction import analyze_total_order_for_all_circuits, convert_to_genotype
 
@@ -8,7 +8,7 @@ __author__ = "@gavruskin"
 # returns the rank order supported by the data in the file (restricted to the three loci---see models_HIV_2007),
 # and for each of the 24 circuits, analyzes the circuit interaction implied by the rank order.
 data = datafile_hiv_process()
-ranking = rank_sum(data)
+ranking = rank_sum_3_sites(data)
 print("\nThe rank order is\n" + convert_to_genotype(ranking) + "\n")
 analyze_total_order_for_all_circuits(ranking, False)
 print("The output has been writen to"
