@@ -1,5 +1,5 @@
-import pandas
-import numpy
+import pandas as pd
+import numpy as np
 from three_way_epistasis import check_for_epistasis
 
 
@@ -31,8 +31,8 @@ def get_mean_fitness(data_file, mutations, sites, mean_type=""):  # Default mean
     # of fitness values for the fist n values where n is the min number of fitness measurements over all genotypes.
     # This should not be used!
     sites = [0] + sites  # This is specific to the data file. Column 0 contains fitness, column 1 names.
-    values = pandas.read_csv(data_file, usecols=sites)
-    values.iloc[:, 0] = numpy.log10(values.iloc[:, 0])
+    values = pd.read_csv(data_file, usecols=sites)
+    values.iloc[:, 0] = np.log10(values.iloc[:, 0])
     size = len(values.iloc[:, 1])
     f000 = []
     f001 = []
@@ -68,30 +68,30 @@ def get_mean_fitness(data_file, mutations, sites, mean_type=""):  # Default mean
                 (values.iloc[s, 3] == mutations[2][1]):
             f111.append(values.iloc[s, 0])
     if mean_type == "mean":
-        w = [numpy.mean(f000), numpy.mean(f001), numpy.mean(f010), numpy.mean(f100), numpy.mean(f011), numpy.mean(f101),
-             numpy.mean(f110), numpy.mean(f111)]
+        w = [np.mean(f000), np.mean(f001), np.mean(f010), np.mean(f100), np.mean(f011), np.mean(f101),
+             np.mean(f110), np.mean(f111)]
         return w
     elif mean_type == "max":
-        w = [numpy.max(f000), numpy.max(f001), numpy.max(f010), numpy.max(f100), numpy.max(f011), numpy.max(f101),
-             numpy.max(f110), numpy.max(f111)]
+        w = [np.max(f000), np.max(f001), np.max(f010), np.max(f100), np.max(f011), np.max(f101),
+             np.max(f110), np.max(f111)]
         return w
     elif mean_type == "min":
-        w = [numpy.min(f000), numpy.min(f001), numpy.min(f010), numpy.min(f100), numpy.min(f011), numpy.min(f101),
-             numpy.min(f110), numpy.min(f111)]
+        w = [np.min(f000), np.min(f001), np.min(f010), np.min(f100), np.min(f011), np.min(f101),
+             np.min(f110), np.min(f111)]
         return w
     elif mean_type == "median":
-        w = [numpy.median(f000), numpy.median(f001), numpy.median(f010), numpy.median(f100), numpy.median(f011),
-             numpy.median(f101), numpy.median(f110), numpy.median(f111)]
+        w = [np.median(f000), np.median(f001), np.median(f010), np.median(f100), np.median(f011),
+             np.median(f101), np.median(f110), np.median(f111)]
         return w
     elif mean_type == "qu1":
-        w = [numpy.percentile(f000, 25), numpy.percentile(f001, 25), numpy.percentile(f010, 25),
-             numpy.percentile(f100, 25), numpy.percentile(f011, 25), numpy.percentile(f101, 25),
-             numpy.percentile(f110, 25), numpy.percentile(f111, 25)]
+        w = [np.percentile(f000, 25), np.percentile(f001, 25), np.percentile(f010, 25),
+             np.percentile(f100, 25), np.percentile(f011, 25), np.percentile(f101, 25),
+             np.percentile(f110, 25), np.percentile(f111, 25)]
         return w
     elif mean_type == "qu3":
-        w = [numpy.percentile(f000, 75), numpy.percentile(f001, 75), numpy.percentile(f010, 75),
-             numpy.percentile(f100, 75), numpy.percentile(f011, 75), numpy.percentile(f101, 75),
-             numpy.percentile(f110, 75), numpy.percentile(f111, 75)]
+        w = [np.percentile(f000, 75), np.percentile(f001, 75), np.percentile(f010, 75),
+             np.percentile(f100, 75), np.percentile(f011, 75), np.percentile(f101, 75),
+             np.percentile(f110, 75), np.percentile(f111, 75)]
         return w
     f_min_length = min(len(f000), len(f001), len(f010), len(f100), len(f011), len(f101), len(f110), len(f111))
     f000_sorted = sorted(f000)

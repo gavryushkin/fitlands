@@ -1,7 +1,8 @@
 from scipy.stats import ranksums
 import math
 import sys
-import numpy
+import operator
+import numpy as np
 
 
 __author__ = "@gavruskin"
@@ -29,9 +30,10 @@ def rank_sum_3_sites(measurements):
 
 
 # Does the same thing as rank_sum_3_sites but for an arbitrary number of sites.
-# Unlike rank_sum_3_sites, produce the ranking of {0, ... n-1}.
+# Unlike rank_sum_3_sites, produce the ranking of genotypes---not their indices.
 # Unlike rank_sum_3_sites, takes a dictionary, where measurements["genotype"] == list of fitnesses, as an input.
-def rank_sum_n_sites(measurements):
+# If details == True, returns a dictionary of genotypes with their mean fitnesses, *ordered by mean fitnesses*.
+def rank_sum_n_sites(measurements, details=False):
     if math.frexp(len(measurements))[0] != 0.5:
         print("rank_sum_n_sites received an input of length %s, which is not equal to the number of genotypes."
               "Quitting." % len(measurements))
@@ -48,11 +50,19 @@ def rank_sum_n_sites(measurements):
                 output_indices[i], output_indices[i + 1] = output_indices[i + 1], output_indices[i]
                 done = False
     output = []
+    output_look_good = []
+    number_loci = 0
     for index in output_indices:
         output.append(measurements.keys()[index])
+        if len(measurements.keys()[index]) > number_loci:
+            number_loci = len(measurements.keys()[index])
+    for index in output_indices:
+        output_look_good.append(genotype_look_good(measurements.keys()[index], number_loci))
+    output_detailed = []
     for genotype in output:
-        print(genotype_look_good(genotype, 5))
         fitness = measurements[genotype][1:]
-        print(str(numpy.mean(fitness)) + "\n")
-
-    return output
+        output_detailed.append([genotype, np.mean(fitness)])
+    if not details:
+        return output
+    else:
+        return output_detailed
