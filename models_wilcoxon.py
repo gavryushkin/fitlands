@@ -1,19 +1,11 @@
 from scipy.stats import ranksums
 import math
 import sys
-import operator
 import numpy as np
+from conditional_and_marginal_epistasis import genotype_look_good
 
 
 __author__ = "@gavruskin"
-
-
-# Adds missing 0's in front the genotype to make it of length n.
-def genotype_look_good(genotype, n):
-    output = str(genotype)
-    for i in range(n - len(genotype)):
-        output = "0" + output
-    return output
 
 
 # Returns the ordering of vectors of measurements according to Wilcoxon rank-sum test:

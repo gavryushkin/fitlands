@@ -119,7 +119,8 @@ def analyze_partial_orders(file_name, details=False):
         print("\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/partial_orders_analysis.md", "w")
-    output_file.write("This file was created using software package Fitlands.\n"
+    output_file.write("This file was created using software package Fitlands "
+                      "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                       "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "
                       "and to stay tuned.\n"
@@ -131,7 +132,8 @@ def analyze_partial_orders(file_name, details=False):
                   "Please remove and rerun.")
             sys.exit()
         output_file_details = open("./outputs/partial_orders_analysis_details.md", "w")
-        output_file_details.write("This file was created using software package Fitlands.\n"
+        output_file_details.write("This file was created using software package Fitlands "
+                                  "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                                   "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                                   "to obtain up-to-date bibliographic information for Fitlands, "
                                   "and to stay tuned.\n"
@@ -312,7 +314,8 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
         print("\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/partial_orders_analysis.md", "w")
-    output_file.write("This file was created using software package Fitlands.\n"
+    output_file.write("This file was created using software package Fitlands "
+                      "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                       "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "
                       "and to stay tuned.\n"
@@ -326,7 +329,8 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
                   "Please remove and rerun.")
             sys.exit()
         output_file_details = open("./outputs/partial_orders_analysis_details.md", "w")
-        output_file_details.write("This file was created using software package Fitlands.\n"
+        output_file_details.write("This file was created using software package Fitlands "
+                                  "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                                   "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                                   "to obtain up-to-date bibliographic information for Fitlands, "
                                   "and to stay tuned.\n"
@@ -394,7 +398,8 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
         print("\nFile total_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/total_order_analysis_for_all_circuits.md", "w")
-    output_file.write("This file was created using software package Fitlands.\n"
+    output_file.write("This file was created using software package Fitlands "
+                      "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                       "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "
                       "and to stay tuned.\n"

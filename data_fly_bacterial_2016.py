@@ -2,7 +2,7 @@ import pandas as pd
 from models_wilcoxon import rank_sum_n_sites
 import networkx as nx
 import pylab as plt
-from models_wilcoxon import genotype_look_good
+from conditional_and_marginal_epistasis import genotype_look_good, marginal_two_way_epistasis_analysis
 
 
 __author__ = '@gavruskin'
@@ -16,18 +16,22 @@ __author__ = '@gavruskin'
 def datafile_fly_bacteria_process(data_file):
     values = pd.read_csv(data_file)
     landscapes = {}
-    for i in range(len(values.iloc[:, 0])):
-        landscapes[str(values.iloc[i, 0])] = values.iloc[i, :]
+    for ind in range(len(values.iloc[:, 0])):
+        landscapes[str(values.iloc[ind, 0])] = values.iloc[ind, 1:]
     return landscapes
 
 
-data = datafile_fly_bacteria_process("fly_bacteria_data.csv")
+data = datafile_fly_bacteria_process("fly_bacteria_data_new.csv")
 
-genotypes_with_means = rank_sum_n_sites(data, True)
-genotypes = rank_sum_n_sites(data)
-for i in range(len(genotypes_with_means)):
-    print(genotype_look_good(genotypes_with_means[i][0], 5))
-    print(genotypes_with_means[i][1])
+marginal_two_way_epistasis_analysis(data)
+
+# genotypes_with_means = rank_sum_n_sites(data, True)
+# genotypes = rank_sum_n_sites(data)
+# for i in range(len(genotypes_with_means)):
+#     print(genotype_look_good(genotypes_with_means[i][0], 5))
+#     print(genotypes_with_means[i][1])
+#
+# An attempt to draw partial orders:
 #
 # partial_order = nx.DiGraph()
 # for genotype in genotypes:
