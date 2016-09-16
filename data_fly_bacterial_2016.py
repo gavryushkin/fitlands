@@ -2,7 +2,8 @@ import pandas as pd
 from models_wilcoxon import rank_sum_n_sites
 import networkx as nx
 import pylab as plt
-from conditional_and_marginal_epistasis import genotype_look_good, marginal_two_way_epistasis_analysis
+from conditional_and_marginal_epistasis import genotype_look_good,\
+    marginal_two_way_interaction_analysis, marginal_three_way_interaction_analysis
 
 
 __author__ = '@gavruskin'
@@ -23,7 +24,8 @@ def datafile_fly_bacteria_process(data_file):
 
 data = datafile_fly_bacteria_process("fly_bacteria_data_new.csv")
 
-marginal_two_way_epistasis_analysis(data)
+marginal_two_way_interaction_analysis(data)
+marginal_three_way_interaction_analysis(data)
 
 # genotypes_with_means = rank_sum_n_sites(data, True)
 # genotypes = rank_sum_n_sites(data)
