@@ -1,6 +1,5 @@
 import numpy as np
 
-
 __author__ = "@gavruskin"
 
 
@@ -50,7 +49,7 @@ def marginal_two_way_interaction_analysis(data):
     epi_matrix = np.empty([number_trials, n, n], dtype=float)  # Compute epistasis.
     for trial in range(number_trials):
         for i in range(n):
-            for j in range(i+1, n):  # Loop through pairs of sites (i, j) to find marginal epistasis between i and j.
+            for j in range(i + 1, n):  # Loop through pairs of sites (i, j) to find marginal epistasis between i and j.
                 epi = 0
                 for genotype in data:
                     if genotype[i] == genotype[j] == "0" or genotype[i] == genotype[j] == "1":
@@ -71,7 +70,7 @@ def marginal_two_way_interaction_analysis(data):
     epi_suspected_neg_sites = []
     epi_suspected_zero_sites = []
     for i in range(n):
-        for j in range(i+1, n):
+        for j in range(i + 1, n):
             epi_pos_count = 0
             epi_neg_count = 0
             epi_zero_count = 0
@@ -123,8 +122,8 @@ def marginal_two_way_interaction_analysis(data):
 
     output_file.write("\n\n## Epistasis values sorted by sites\n\n")  # Write raw values with fractions to file.
     for i in range(n):
-        for j in range(i+1, n):
-            output_file.write("Sites %s and %s:\n" % (i+1, j+1))
+        for j in range(i + 1, n):
+            output_file.write("Sites %s and %s:\n" % (i + 1, j + 1))
             output_file.write("Probability of positive epistasis is: %s%%\n"
                               "Probability of negative epistasis is: %s%%\n"
                               "Probability of no epistasis is: %s%%\n"
@@ -132,7 +131,7 @@ def marginal_two_way_interaction_analysis(data):
                                  round(epi_zero_percent[i][j], 2)))
             for trial in range(number_trials):
                 output_file.write("Epistasis value for sites %s and %s in trial %s is %s\n"
-                                  % (i+1, j+1, trial+1, epi_matrix[trial][i][j]))
+                                  % (i + 1, j + 1, trial + 1, epi_matrix[trial][i][j]))
             output_file.write("\n")
 
     output_file.close()
@@ -168,17 +167,21 @@ def marginal_three_way_interaction_analysis(data):
     epi_matrix = np.empty([number_trials, n, n, n], dtype=float)  # Compute epistasis.
     for trial in range(number_trials):
         for i in range(n):
-            for j in range(i+1, n):
-                for k in range(j+1, n):  # Loop through sites (i, j, k) to find marginal interaction (u_111).
+            for j in range(i + 1, n):
+                for k in range(j + 1, n):  # Loop through sites (i, j, k) to find marginal interaction (u_111).
                     epi = 0
                     for genotype in data:
                         count_ones = 0
-                        for mutation in genotype:
-                            if mutation == "1":
-                                count_ones += 1
-                            elif mutation != "0":
-                                print("Attention! Your genotypes contain entries different from 0 and 1."
-                                      "Those are set to 0.")
+                        if genotype[i] == "1":
+                            count_ones += 1
+                        if genotype[j] == "1":
+                            count_ones += 1
+                        if genotype[k] == "1":
+                            count_ones += 1
+                        if (genotype[i] != "0" and genotype[i] != "1") or (genotype[j] != "0" and genotype[j] != "1") \
+                                or (genotype[k] != "0" and genotype[k] != "1"):
+                            print("Attention! Your genotypes contain entries different from 0 and 1."
+                                  "Those are set to 0.")
                         if count_ones % 2 == 0:
                             epi += data[genotype][trial]
                         else:
@@ -195,8 +198,8 @@ def marginal_three_way_interaction_analysis(data):
     epi_suspected_neg_sites = []
     epi_suspected_zero_sites = []
     for i in range(n):
-        for j in range(i+1, n):
-            for k in range(j+1, n):
+        for j in range(i + 1, n):
+            for k in range(j + 1, n):
                 epi_pos_count = 0
                 epi_neg_count = 0
                 epi_zero_count = 0
@@ -248,9 +251,9 @@ def marginal_three_way_interaction_analysis(data):
 
     output_file.write("\n\n## Epistasis values sorted by sites\n\n")  # Write raw values with fractions to file.
     for i in range(n):
-        for j in range(i+1, n):
-            for k in range(j+1, n):
-                output_file.write("Sites %s, %s, %s:\n" % (i+1, j+1, k+1))
+        for j in range(i + 1, n):
+            for k in range(j + 1, n):
+                output_file.write("Sites %s, %s, %s:\n" % (i + 1, j + 1, k + 1))
                 output_file.write("Probability of positive three-way interaction is: %s%%\n"
                                   "Probability of negative three-way interaction is: %s%%\n"
                                   "Probability of no three-way interaction is: %s%%\n"
@@ -258,7 +261,7 @@ def marginal_three_way_interaction_analysis(data):
                                      round(epi_zero_percent[i][j][k], 2)))
                 for trial in range(number_trials):
                     output_file.write("Interaction value for sites %s, %s, %s in trial %s is %s\n"
-                                      % (i+1, j+1, k+1, trial+1, epi_matrix[trial][i][j][k]))
+                                      % (i + 1, j + 1, k + 1, trial + 1, epi_matrix[trial][i][j][k]))
                 output_file.write("\n")
 
     output_file.close()
