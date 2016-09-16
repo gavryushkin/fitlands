@@ -106,7 +106,7 @@ def convert_to_genotype(total_order):
     return output
 
 
-# Takes file ./outputs/partial_orders.md with partial with partial orders.
+# Takes file ./outputs/partial_orders.md with partial orders.
 # If 'details' == True, returns two files: ./outputs/partial_orders_analysis.md and
 # ./outputs/partial_orders_analysis_details.md.
 # The first one contains the number of total extensions of each of the partial orders with numbers and fractions of
