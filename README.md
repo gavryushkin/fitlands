@@ -24,7 +24,7 @@ For example, for the analysis of two- and three-way interactions in your data, r
 python two_and_three_way_interactions.py
 ```
 after putting your data file in the folder `fitlands`.
-See [below](https://github.com/gavruskin/fitlands#analysis-of-two-and-three-way-interactions) to learn how to format your data file and other details of this analysis`.
+See [below](https://github.com/gavruskin/fitlands#analysis-of-two--and-three-way-interactions) to learn how to format your data file and other details of this analysis`.
 
 
 ## HIV data analysis from [\[1\]](https://github.com/gavruskin/fitlands#references)
