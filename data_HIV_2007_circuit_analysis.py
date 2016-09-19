@@ -13,5 +13,5 @@ print("\nThe rank order is\n" + convert_to_genotype(ranking) + "\n")
 analyze_total_order_for_all_circuits(ranking, False)
 print("The output has been written to "
       "file total_order_analysis_for_all_circuits.md located in the directory ./outputs\n")
-print("The three-way interaction corresponds to the last circuit:\n"
-      "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)")
+print("The three-way interaction corresponds to the last interaction coordinate:\n"
+      "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)\n")

@@ -38,7 +38,7 @@ def marginal_two_way_interaction_analysis(data):
         data[genotype_look_good(genotype, n)] = data.pop(genotype)
 
     output_file = open("outputs/two_way_epistasis_analysis.md", "w")
-    output_file.write("This file was created using software package Fitlands "
+    output_file.write("This file has been created using software package Fitlands "
                       "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                       "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "
@@ -156,7 +156,7 @@ def marginal_three_way_interaction_analysis(data):
         data[genotype_look_good(genotype, n)] = data.pop(genotype)
 
     output_file = open("outputs/three_way_epistasis_analysis.md", "w")
-    output_file.write("This file was created using software package Fitlands "
+    output_file.write("This file has been created using software package Fitlands "
                       "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                       "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "

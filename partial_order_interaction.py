@@ -119,7 +119,7 @@ def analyze_partial_orders(file_name, details=False):
         print("\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/partial_orders_analysis.md", "w")
-    output_file.write("This file was created using software package Fitlands "
+    output_file.write("This file has been created using software package Fitlands "
                       "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                       "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "
@@ -132,7 +132,7 @@ def analyze_partial_orders(file_name, details=False):
                   "Please remove and rerun.")
             sys.exit()
         output_file_details = open("./outputs/partial_orders_analysis_details.md", "w")
-        output_file_details.write("This file was created using software package Fitlands "
+        output_file_details.write("This file has been created using software package Fitlands "
                                   "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                                   "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                                   "to obtain up-to-date bibliographic information for Fitlands, "
@@ -314,7 +314,7 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
         print("\nFile partial_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/partial_orders_analysis.md", "w")
-    output_file.write("This file was created using software package Fitlands "
+    output_file.write("This file has been created using software package Fitlands "
                       "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                       "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "
@@ -329,7 +329,7 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
                   "Please remove and rerun.")
             sys.exit()
         output_file_details = open("./outputs/partial_orders_analysis_details.md", "w")
-        output_file_details.write("This file was created using software package Fitlands "
+        output_file_details.write("This file has been created using software package Fitlands "
                                   "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                                   "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                                   "to obtain up-to-date bibliographic information for Fitlands, "
@@ -390,7 +390,7 @@ def analyze_partial_orders_for_circuit(file_name, details=False,
 
 # Takes total_order as an input in the genotype format, e.g. {0, 11, 101} if genotype_format == True, or
 # in index format, e.g. {1, 5, 6}, otherwise.
-# Returns a file with the analysis of interactions implied by the rank order total_order for all 24 circuits.
+# Returns a file with the analysis of interactions implied by the rank order total_order for all 20 circuits.
 def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
     if genotype_format:
         total_order = [genotype_to_index(i) for i in total_order]
@@ -398,19 +398,20 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
         print("\nFile total_orders_analysis.md already exists in directory 'outputs'. Please remove and rerun.")
         sys.exit()
     output_file = open("./outputs/total_order_analysis_for_all_circuits.md", "w")
-    output_file.write("This file was created using software package Fitlands "
+    output_file.write("This file has been created using software package Fitlands "
                       "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
                       "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
                       "to obtain up-to-date bibliographic information for Fitlands, "
                       "and to stay tuned.\n"
                       "If you publish the results obtained with the help of this software, "
                       "please don't forget to cite us.\n")
-    positives_list = get_positives_list()
+
+    positives_list = get_positives_list()  # These lists include circuits and interaction coordinates.
     negatives_list = get_negatives_list()
-    imply_positive = []
+    imply_positive = []  # Compute circuit interaction.
     imply_negative = []
     circuits = []
-    for circuit_number in range(24):
+    for circuit_number in range(20):
         positives = positives_list[circuit_number]
         negatives = negatives_list[circuit_number]
         repetitions = get_repetitions_from_circuit_number(circuit_number + 1)
@@ -421,13 +422,42 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
         elif epistasis_negative(total_order, positives, negatives, repetitions):
             imply_negative.append(circuit)
     interaction_total = len(imply_positive) + len(imply_negative)
-    interaction_percent = 100 * interaction_total / float(24)
-    imply_positive_percent = 100 * len(imply_positive) / float(24)
-    imply_negative_percent = 100 * len(imply_negative) / float(24)
-    output_file.write("\n\n# Analysis of circuit interactions for all 24 circuits\n"
-                      "The three-way interaction corresponds to the last circuit:\n"
+    interaction_percent = 100 * interaction_total / float(20)
+    imply_positive_percent = 100 * len(imply_positive) / float(20)
+    imply_negative_percent = 100 * len(imply_negative) / float(20)
+
+    imply_positive_interaction_coordinates = []  # Compute interaction implied by interaction coordinates.
+    imply_negative_interaction_coordinates = []
+    circuits_interaction_coordinates = []
+    for circuit_number in range(20, 24):
+        positives = positives_list[circuit_number]
+        negatives = negatives_list[circuit_number]
+        repetitions = get_repetitions_from_circuit_number(circuit_number + 1)
+        circuit = get_circuit_formula(positives, negatives, repetitions)
+        circuits_interaction_coordinates.append(circuit)
+        if epistasis_positive(total_order, positives, negatives, repetitions):
+            imply_positive_interaction_coordinates.append(circuit)
+        elif epistasis_negative(total_order, positives, negatives, repetitions):
+            imply_negative_interaction_coordinates.append(circuit)
+
+    # Write the results into the file.
+    output_file.write("\n\n# Analysis of interaction coordinates and circuit interactions\n"
+                      "The three-way interaction corresponds to the last interaction coordinate:\n"
                       "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)\n\n"
-                      "Rank order: %s\n\n" % convert_to_genotype(total_order))
+                      "Rank order: %s\n" % convert_to_genotype(total_order))
+
+    # Write the result of interaction coordinate analysis into the file.
+    output_file.write("\n\n## Interaction coordinates\n\n")
+    for circuit in circuits_interaction_coordinates:
+        if circuit in imply_positive_interaction_coordinates:
+            output_file.write("{0} implies positive interaction\n".format(circuit))
+        elif circuit in imply_negative_interaction_coordinates:
+            output_file.write("{0} implies negative interaction\n".format(circuit))
+        else:
+            output_file.write("{0} does not imply interaction\n".format(circuit))
+
+    # Write the result of circuit interaction analysis into the file.
+    output_file.write("\n\n## Circuits\n\n")
     output_file.write("The number of circuits for which the rank order implies circuit interaction: %s (%s%%)\n"
                       % (interaction_total, round(interaction_percent, 2)))
     output_file.write("The number of circuits for which the rank order implies *positive* circuit interaction: "
@@ -436,13 +466,13 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
     output_file.write("The number of circuits for which the rank order implies *negative* circuit interaction: "
                       "%s (%s%%)\n"
                       % (len(imply_negative), round(imply_negative_percent, 2)))
-    output_file.write("\n\n## List of circuits for which the rank order implies *positive* interaction\n\n")
+    output_file.write("\n\n### List of circuits for which the rank order implies *positive* interaction\n\n")
     for circuit in imply_positive:
         output_file.write("{0}\n".format(circuit))
-    output_file.write("\n\n## List of circuits for which the rank order implies *negative* interaction\n\n")
+    output_file.write("\n\n### List of circuits for which the rank order implies *negative* interaction\n\n")
     for circuit in imply_negative:
         output_file.write("{0}\n".format(circuit))
-    output_file.write("\n\n## List of circuits followed by the interaction sign implied by the rank order\n\n")
+    output_file.write("\n\n### List of circuits followed by the interaction sign implied by the rank order\n\n")
     for circuit in circuits:
         if circuit in imply_positive:
             output_file.write("{0}  +\n".format(circuit))
