@@ -339,6 +339,60 @@ def get_circuit_name(circuit):
         return "Unknown circuit (error)"
 
 
+# Takes circuit as a string in the format returned by get_circuit_formula and returns its biological meaning.
+def get_circuit_meaning(circuit):
+    if circuit == "w(000) - w(001) - w(010) + w(100) + w(011) - w(101) - w(110) + w(111)":
+        return "marginal interaction between locus 2 and 3"
+    elif circuit == "w(000) - w(001) + w(010) - w(100) - w(011) + w(101) - w(110) + w(111)":
+        return "marginal interaction between locus 1 and 3"
+    elif circuit == "w(000) + w(001) - w(010) - w(100) - w(011) - w(101) + w(110) + w(111)":
+        return "marginal interaction between locus 1 and 2"
+    elif circuit == "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)":
+        return "three-way interaction"
+    elif circuit == "w(000) - w(010) - w(100) + w(110)":
+        return "two-way interaction conditioned on locus 3 being 0"
+    elif circuit == "w(001) - w(011) - w(101) + w(111)":
+        return "two-way interaction conditioned on locus 3 being 1"
+    elif circuit == "w(000) - w(001) - w(100) + w(101)":
+        return "two-way interaction conditioned on locus 2 being 0"
+    elif circuit == "w(010) - w(011) - w(110) + w(111)":
+        return "two-way interaction conditioned on locus 2 being 1"
+    elif circuit == "w(000) - w(001) - w(010) + w(011)":
+        return "two-way interaction conditioned on locus 1 being 0"
+    elif circuit == "w(100) - w(101) - w(110) + w(111)":
+        return "two-way interaction conditioned on locus 1 being 1"
+    elif circuit == "w(000) - w(100) - w(011) + w(111)":
+        return "interaction between locus 1 and 2 conditioned on mutations at locus 2 and 3 coincide"
+    elif circuit == "w(001) - w(010) - w(101) + w(110)":
+        return "interaction between locus 1 and 2 conditioned on mutations at locus 2 and 3 are different"
+    elif circuit == "w(000) - w(010) - w(101) + w(111)":
+        return "interaction between locus 1 and 2 conditioned on mutations at locus 1 and 3 coincide"
+    elif circuit == "w(001) - w(100) - w(011) + w(110)":
+        return "interaction between locus 1 and 2 conditioned on mutations at locus 1 and 3 are different"
+    elif circuit == "w(000) - w(001) - w(110) + w(111)":
+        return "interaction between locus 1 and 3 conditioned on mutations at locus 1 and 2 coincide"
+    elif circuit == "w(010) - w(100) - w(011) + w(101)":
+        return "interaction between locus 1 and 3 conditioned on mutations at locus 1 and 2 are different"
+    elif circuit == "-2w(000) + w(001) + w(010) + w(100) - w(111)":
+        return "m"
+    elif circuit == "-w(000) + w(011) + w(101) + w(110) - 2w(111)":
+        return "n"
+    elif circuit == "-w(001) + w(010) + w(100) - 2w(110) + w(111)":
+        return "o"
+    elif circuit == "w(000) - 2w(001) + w(011) + w(101) - w(110)":
+        return "p"
+    elif circuit == "w(001) - w(010) + w(100) - 2w(101) + w(111)":
+        return "q"
+    elif circuit == "w(000) - 2w(010) + w(011) - w(101) + w(110)":
+        return "r"
+    elif circuit == "w(000) - 2w(100) - w(011) + w(101) + w(110)":
+        return "s"
+    elif circuit == "w(001) + w(010) - w(100) - 2w(011) + w(111)":
+        return "t"
+    else:
+        return "Unknown circuit (error)"
+
+
 # Does the same things as analyze_partial_orders but with respect to the given circuit instead of the plain
 # u_111 (three-way epistasis), which is the default option.
 # Hence, with defaults the behavior is identical to analyze_partial_orders.
