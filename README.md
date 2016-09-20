@@ -33,6 +33,7 @@ To reproduce the analysis of the HIV-1 data from the upcoming paper by Krona, Ga
 python data_HIV_2007_circuit_analysis.py
 ```
 The result is the following:
+---
 ### Analysis of interaction coordinates and circuit interactions
 The three-way interaction corresponds to the last interaction coordinate u(111)
 
@@ -97,6 +98,7 @@ q = w(001) - w(010) + w(100) - 2w(101) + w(111) | +/-
 r = w(000) - 2w(010) + w(011) - w(101) + w(110) | +
 s = w(000) - 2w(100) - w(011) + w(101) + w(110) | +/-
 t = w(001) + w(010) - w(100) - 2w(011) + w(111) | -
+---
 
 
 ## Analysis of partial orders

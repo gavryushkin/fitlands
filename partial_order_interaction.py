@@ -284,6 +284,61 @@ def get_circuit_formula(positives, negatives, repetitions):
     return circuit
 
 
+# Takes circuit as string in the format returned by get_circuit_formula and returns the name of the circuit
+# as in BPS[2007].
+def get_circuit_name(circuit):
+    if circuit == "w(000) - w(001) - w(010) + w(100) + w(011) - w(101) - w(110) + w(111)":
+        return "u(011)"
+    elif circuit == "w(000) - w(001) + w(010) - w(100) - w(011) + w(101) - w(110) + w(111)":
+        return "u(101)"
+    elif circuit == "w(000) + w(001) - w(010) - w(100) - w(011) - w(101) + w(110) + w(111)":
+        return "u(110)"
+    elif circuit == "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)":
+        return "u(111)"
+    elif circuit == "w(000) - w(010) - w(100) + w(110)":
+        return "a"
+    elif circuit == "w(001) - w(011) - w(101) + w(111)":
+        return "b"
+    elif circuit == "w(000) - w(001) - w(100) + w(101)":
+        return "c"
+    elif circuit == "w(010) - w(011) - w(110) + w(111)":
+        return "d"
+    elif circuit == "w(000) - w(001) - w(010) + w(011)":
+        return "e"
+    elif circuit == "w(100) - w(101) - w(110) + w(111)":
+        return "f"
+    elif circuit == "w(000) - w(100) - w(011) + w(111)":
+        return "g"
+    elif circuit == "w(001) - w(010) - w(101) + w(110)":
+        return "h"
+    elif circuit == "w(000) - w(010) - w(101) + w(111)":
+        return "i"
+    elif circuit == "w(001) - w(100) - w(011) + w(110)":
+        return "j"
+    elif circuit == "w(000) - w(001) - w(110) + w(111)":
+        return "k"
+    elif circuit == "w(010) - w(100) - w(011) + w(101)":
+        return "l"
+    elif circuit == "-2w(000) + w(001) + w(010) + w(100) - w(111)":
+        return "m"
+    elif circuit == "-w(000) + w(011) + w(101) + w(110) - 2w(111)":
+        return "n"
+    elif circuit == "-w(001) + w(010) + w(100) - 2w(110) + w(111)":
+        return "o"
+    elif circuit == "w(000) - 2w(001) + w(011) + w(101) - w(110)":
+        return "p"
+    elif circuit == "w(001) - w(010) + w(100) - 2w(101) + w(111)":
+        return "q"
+    elif circuit == "w(000) - 2w(010) + w(011) - w(101) + w(110)":
+        return "r"
+    elif circuit == "w(000) - 2w(100) - w(011) + w(101) + w(110)":
+        return "s"
+    elif circuit == "w(001) + w(010) - w(100) - 2w(011) + w(111)":
+        return "t"
+    else:
+        return "Unknown circuit (error)"
+
+
 # Does the same things as analyze_partial_orders but with respect to the given circuit instead of the plain
 # u_111 (three-way epistasis), which is the default option.
 # Hence, with defaults the behavior is identical to analyze_partial_orders.
@@ -442,19 +497,18 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
 
     # Write the results into the file.
     output_file.write("\n\n# Analysis of interaction coordinates and circuit interactions\n"
-                      "The three-way interaction corresponds to the last interaction coordinate:\n"
-                      "w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111)\n\n"
+                      "The three-way interaction corresponds to the last interaction coordinate u(111)\n\n"
                       "Rank order: %s\n" % convert_to_genotype(total_order))
 
     # Write the result of interaction coordinate analysis into the file.
     output_file.write("\n\n## Interaction coordinates\n\n")
     for circuit in circuits_interaction_coordinates:
         if circuit in imply_positive_interaction_coordinates:
-            output_file.write("{0} implies positive interaction\n".format(circuit))
+            output_file.write("{0} = {1} implies positive interaction\n".format(get_circuit_name(circuit), circuit))
         elif circuit in imply_negative_interaction_coordinates:
-            output_file.write("{0} implies negative interaction\n".format(circuit))
+            output_file.write("{0} = {1} implies negative interaction\n".format(get_circuit_name(circuit), circuit))
         else:
-            output_file.write("{0} does not imply interaction\n".format(circuit))
+            output_file.write("{0} = {1} does not imply interaction\n".format(get_circuit_name(circuit), circuit))
 
     # Write the result of circuit interaction analysis into the file.
     output_file.write("\n\n## Circuits\n\n")
@@ -468,18 +522,19 @@ def analyze_total_order_for_all_circuits(total_order, genotype_format=True):
                       % (len(imply_negative), round(imply_negative_percent, 2)))
     output_file.write("\n\n### List of circuits for which the rank order implies *positive* interaction\n\n")
     for circuit in imply_positive:
-        output_file.write("{0}\n".format(circuit))
+        output_file.write("{0} = {1}\n".format(get_circuit_name(circuit), circuit))
     output_file.write("\n\n### List of circuits for which the rank order implies *negative* interaction\n\n")
     for circuit in imply_negative:
-        output_file.write("{0}\n".format(circuit))
-    output_file.write("\n\n### List of circuits followed by the interaction sign implied by the rank order\n\n")
+        output_file.write("{0} = {1}\n".format(get_circuit_name(circuit), circuit))
+    output_file.write("\n\n### List of circuits followed by the interaction sign implied by the rank order\n\n"
+                      "Circuit | Interaction sign\n"
+                      "--- | ---\n")
     for circuit in circuits:
         if circuit in imply_positive:
-            output_file.write("{0}  +\n".format(circuit))
+            output_file.write("{0} = {1} | +\n".format(get_circuit_name(circuit), circuit))
         elif circuit in imply_negative:
-            output_file.write("{0}  -\n".format(circuit))
+            output_file.write("{0} = {1} | -\n".format(get_circuit_name(circuit), circuit))
         else:
-            output_file.write("{0}  +/-\n".format(circuit))
-    output_file.write("\n")
+            output_file.write("{0} = {1} | +/-\n".format(get_circuit_name(circuit), circuit))
     output_file.close()
     return
