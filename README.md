@@ -41,36 +41,36 @@ Rank order: [000, 100, 011, 110, 101, 001, 010, 111]
 
 #### Interaction coordinates
 
-u(011) = w(000) - w(001) - w(010) + w(100) + w(011) - w(101) - w(110) + w(111) does not imply interaction
-u(101) = w(000) - w(001) + w(010) - w(100) - w(011) + w(101) - w(110) + w(111) does not imply interaction
-u(110) = w(000) + w(001) - w(010) - w(100) - w(011) - w(101) + w(110) + w(111) does not imply interaction
-u(111) = w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111) implies positive interaction
+u(011) = w(000) - w(001) - w(010) + w(100) + w(011) - w(101) - w(110) + w(111) does not imply interaction  
+u(101) = w(000) - w(001) + w(010) - w(100) - w(011) + w(101) - w(110) + w(111) does not imply interaction  
+u(110) = w(000) + w(001) - w(010) - w(100) - w(011) - w(101) + w(110) + w(111) does not imply interaction  
+u(111) = w(000) - w(001) - w(010) - w(100) + w(011) + w(101) + w(110) - w(111) implies positive interaction  
 
 
 #### Circuits
 
-The number of circuits for which the rank order implies circuit interaction: 11 (55.0%)
-The number of circuits for which the rank order implies *positive* circuit interaction: 6 (30.0%)
-The number of circuits for which the rank order implies *negative* circuit interaction: 5 (25.0%)
+The number of circuits for which the rank order implies circuit interaction: 11 (55.0%)  
+The number of circuits for which the rank order implies *positive* circuit interaction: 6 (30.0%)  
+The number of circuits for which the rank order implies *negative* circuit interaction: 5 (25.0%)  
 
 
 ##### List of circuits for which the rank order implies *positive* interaction
 
-a = w(000) - w(010) - w(100) + w(110)
-c = w(000) - w(001) - w(100) + w(101)
-e = w(000) - w(001) - w(010) + w(011)
-h = w(001) - w(010) - w(101) + w(110)
-p = w(000) - 2w(001) + w(011) + w(101) - w(110)
-r = w(000) - 2w(010) + w(011) - w(101) + w(110)
+a = w(000) - w(010) - w(100) + w(110)  
+c = w(000) - w(001) - w(100) + w(101)  
+e = w(000) - w(001) - w(010) + w(011)  
+h = w(001) - w(010) - w(101) + w(110)  
+p = w(000) - 2w(001) + w(011) + w(101) - w(110)  
+r = w(000) - 2w(010) + w(011) - w(101) + w(110)  
 
 
 ##### List of circuits for which the rank order implies *negative* interaction
 
-b = w(001) - w(011) - w(101) + w(111)
-d = w(010) - w(011) - w(110) + w(111)
-j = w(001) - w(100) - w(011) + w(110)
-l = w(010) - w(100) - w(011) + w(101)
-t = w(001) + w(010) - w(100) - 2w(011) + w(111)
+b = w(001) - w(011) - w(101) + w(111)  
+d = w(010) - w(011) - w(110) + w(111)  
+j = w(001) - w(100) - w(011) + w(110)  
+l = w(010) - w(100) - w(011) + w(101)  
+t = w(001) + w(010) - w(100) - 2w(011) + w(111)  
 
 
 ##### List of circuits followed by the interaction sign implied by the rank order
