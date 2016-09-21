@@ -38,7 +38,7 @@ def conditional_two_way_interaction_analysis(data):
                       "and to stay tuned.\n"
                       "If you publish the results obtained with the help of this software, "
                       "please don't forget to cite us.\n")
-    output_file.write("\n\n# Conditional two-way interaction analysis\n")
+    output_file.write("\n\n# Conditional two-way interaction analysis\n\n")
 
     epi_matrix = np.empty([number_trials, n, n, m], dtype=float)  # Compute epistasis.
     for trial in range(number_trials):
@@ -60,14 +60,16 @@ def conditional_two_way_interaction_analysis(data):
                                     "Attention! Your genotypes contain entries different from 0 and 1. "
                                     "Those are skipped.")
                     epi_matrix[trial][i][j][k] = epi
-    for trial in range(number_trials):
-        output_file.write("\n\n## Trial %s\n" % (trial + 1))
-        for i in range(n):
-            for j in range(i + 1, n):
-                output_file.write("\n### Locus %s and %s (trial %s)\n\n" % (i + 1, j + 1, trial + 1))
-                for k in range(m):
-                    output_file.write("Conditioning on %s, the interaction (epistasis) is %s\n" %
-                                      (genotype_look_good("{0:b}".format(k), n - 2), epi_matrix[trial][i][j][k]))
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            output_file.write("\n## Locus %s and %s\n\n" % (i + 1, j + 1))
+            for k in range(m):
+                for trial in range(number_trials):
+                    output_file.write("Conditioning on %s, the interaction (epistasis) in trial %s is %s\n" %
+                                (genotype_look_good("{0:b}".format(k), n - 2), trial + 1, epi_matrix[trial][i][j][k]))
+                if i != n - 2 or j != n - 1 or k != m - 1:
+                    output_file.write("\n")
     output_file.close()
     print("The output has been written into file two_way_epistasis_analysis.md in the ./outputs directory.\n")
     return epi_matrix
