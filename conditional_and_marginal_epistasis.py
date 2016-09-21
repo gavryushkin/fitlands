@@ -61,11 +61,10 @@ def conditional_two_way_interaction_analysis(data):
                                     "Those are skipped.")
                     epi_matrix[trial][i][j][k] = epi
     for trial in range(number_trials):
-        trial_plus_one = trial + 1
-        output_file.write("\n\n## Trial %s\n" % trial_plus_one)
+        output_file.write("\n\n## Trial %s\n" % (trial + 1))
         for i in range(n):
             for j in range(i + 1, n):
-                output_file.write("\n### Locus %s and %s\n\n" % (i + 1, j + 1))
+                output_file.write("\n### Locus %s and %s (trial %s)\n\n" % (i + 1, j + 1, trial + 1))
                 for k in range(m):
                     output_file.write("Conditioning on %s is %s\n" %
                                       (genotype_look_good("{0:b}".format(k), n - 2), epi_matrix[trial][i][j][k]))
