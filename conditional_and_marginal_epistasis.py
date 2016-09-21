@@ -1,6 +1,5 @@
 import numpy as np
 
-
 __author__ = "@gavruskin"
 
 
@@ -15,15 +14,69 @@ def genotype_look_good(genotype, n):
 # Returns a file with comprehensive analysis of conditional epistasis.
 # TODO: update and finish this.
 # data is a dictionary, num_sites == total number of sites,
-# site_numbers == list of numbers of sites with fixed mutations, sit_mutations == list of fixed mutations.
-def conditional_two_way_epistasis_analysis(data, num_sites, site_numbers, site_mutations):
-    pass
+def conditional_two_way_interaction_analysis(data):
+    number_trials = 0
+    for genotype in data:
+        number_trials = len(data[genotype])
+        break
+    print("Missing data is currently not supported by conditional two-way interaction analysis. "
+          "Make sure your fitness values do not have missing data.\n")
+    # TODO: Add support for missing data.
+    n = 0  # Number of sites.
+    for genotype in data:
+        if len(genotype) > n:
+            n = len(genotype)
+    m = 2 ** (n - 2)  # Number of sequence to condition on
+    for genotype in data:  # Make the genotypes look good (all of the same length):
+        data[genotype_look_good(genotype, n)] = data.pop(genotype)
+
+    output_file = open("outputs/conditional_two_way_epistasis_analysis.md", "w")
+    output_file.write("This file has been created using software package Fitlands "
+                      "(Alex Gavryushkin, CBG, D-BSSE, ETH Zurich).\n"
+                      "Please refer to [https://github.com/gavruskin/fitlands] for legal matters, "
+                      "to obtain up-to-date bibliographic information for Fitlands, "
+                      "and to stay tuned.\n"
+                      "If you publish the results obtained with the help of this software, "
+                      "please don't forget to cite us.\n")
+    output_file.write("\n\n# Conditional two-way interaction analysis\n")
+
+    epi_matrix = np.empty([number_trials, n, n, m], dtype=float)  # Compute epistasis.
+    for trial in range(number_trials):
+        for i in range(n):
+            for j in range(i + 1, n):
+                for k in range(m):  # Loop through sites (i, j) to find the interaction conditioning on genotype #k.
+                    epi = 0
+                    genotype_condition = genotype_look_good("{0:b}".format(k), n - 2)
+                    for genotype in data:
+                        genotype_background = genotype[:i] + genotype[i + 1:j] + genotype[j + 1:]
+                        if genotype_background == genotype_condition:
+                            if genotype[i] == genotype[j] == "0" or genotype[i] == genotype[j] == "1":
+                                epi += data[genotype][trial]
+                            elif (genotype[i] == "0" and genotype[j] == "1") or \
+                                    (genotype[i] == "1" and genotype[j] == "0"):
+                                epi -= data[genotype][trial]
+                            else:
+                                print(
+                                    "Attention! Your genotypes contain entries different from 0 and 1. "
+                                    "Those are skipped.")
+                    epi_matrix[trial][i][j][k] = epi
+    for trial in range(number_trials):
+        trial_plus_one = trial + 1
+        output_file.write("\n\n## Trial %s\n" % trial_plus_one)
+        for i in range(n):
+            for j in range(i + 1, n):
+                output_file.write("\n### Locus %s and %s\n\n" % (i + 1, j + 1))
+                for k in range(m):
+                    output_file.write("Conditioning on %s is %s\n" %
+                                      (genotype_look_good("{0:b}".format(k), n - 2), epi_matrix[trial][i][j][k]))
+    output_file.close()
+    print("The output has been written into file two_way_epistasis_analysis.md in the ./outputs directory.\n")
+    return epi_matrix
 
 
 # Returns a file with comprehensive analysis of marginal two-way epistasis epistasis.
 # data is a dictionary with genotypes as keys and fitness values across the trials as a list.
 def marginal_two_way_interaction_analysis(data):
-    n = 0  # Number of sites.
     number_trials = 0
     for genotype in data:
         number_trials = len(data[genotype])
@@ -31,10 +84,11 @@ def marginal_two_way_interaction_analysis(data):
     print("Missing data is currently not supported by two-way interaction analysis. "
           "Make sure your fitness values do not have missing data.\n")
     # TODO: Add support for missing data.
-    for genotype in data:  # Make the genotypes look good (all of the same length):
+    n = 0  # Number of sites.
+    for genotype in data:
         if len(genotype) > n:
             n = len(genotype)
-    for genotype in data:
+    for genotype in data:  # Make the genotypes look good (all of the same length):
         data[genotype_look_good(genotype, n)] = data.pop(genotype)
 
     output_file = open("outputs/two_way_epistasis_analysis.md", "w")
@@ -136,12 +190,11 @@ def marginal_two_way_interaction_analysis(data):
             output_file.write("\n")
 
     output_file.close()
-    print("The output has been written into file two_way_epistasis_analysis.md in the 'outputs' directory.\n")
-    return
+    print("The output has been written into file two_way_epistasis_analysis.md in the ./outputs directory.\n")
+    return epi_matrix
 
 
 def marginal_three_way_interaction_analysis(data):
-    n = 0  # Number of sites.
     number_trials = 0
     for genotype in data:
         number_trials = len(data[genotype])
@@ -149,10 +202,11 @@ def marginal_three_way_interaction_analysis(data):
     print("Missing data is currently not supported by three-way interaction analysis. "
           "Make sure your fitness values do not have missing data.\n")
     # TODO: Add support for missing data.
-    for genotype in data:  # Make the genotypes look good (all of the same length):
+    n = 0  # Number of sites.
+    for genotype in data:
         if len(genotype) > n:
             n = len(genotype)
-    for genotype in data:
+    for genotype in data:  # Make the genotypes look good (all of the same length):
         data[genotype_look_good(genotype, n)] = data.pop(genotype)
 
     output_file = open("outputs/three_way_epistasis_analysis.md", "w")
@@ -266,5 +320,5 @@ def marginal_three_way_interaction_analysis(data):
                 output_file.write("\n")
 
     output_file.close()
-    print("The output has been written into file three_way_epistasis_analysis.md in the 'outputs' directory.\n")
-    return
+    print("The output has been written into file three_way_epistasis_analysis.md in the ./outputs directory.\n")
+    return epi_matrix
