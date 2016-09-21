@@ -66,7 +66,7 @@ def conditional_two_way_interaction_analysis(data):
             for j in range(i + 1, n):
                 output_file.write("\n### Locus %s and %s (trial %s)\n\n" % (i + 1, j + 1, trial + 1))
                 for k in range(m):
-                    output_file.write("Conditioning on %s is %s\n" %
+                    output_file.write("Conditioning on %s, the interaction (epistasis) is %s\n" %
                                       (genotype_look_good("{0:b}".format(k), n - 2), epi_matrix[trial][i][j][k]))
     output_file.close()
     print("The output has been written into file two_way_epistasis_analysis.md in the ./outputs directory.\n")
