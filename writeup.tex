@@ -1,0 +1,135 @@
+%UsePlainTex
+\font \rm cmr10 \magnification \magstep 2 \rm 
+\input tikz.tex
+
+In our investigations of fitness landscapes, we considered a
+three loci system.  Each locus had two states or
+``alleles'', which we denoted with the binary digits `0' or
+`1'.  Using this notation, we found it convenient to
+represent genotypes as binary numbers between 0 and 7.  A
+fitness landscape is a function from bitstrings to real
+numbers.  
+
+Linkage is not considered in our investigations, so the
+order in which the loci are written is not relevant.
+Furthermore, whether we call a state `0' or `1' is also not
+relevant.  Perhaps somewhat surprisingly, these
+``symmetries'' correspond exactly to the symmetric
+transformations of the three dimensional cube, including
+those which flip the cube outside of three dimensional space
+and back in with a different orientation.  This equivalence
+is realized by placing a cube in a Cartesian space with
+vertices at
+(0,0,0),(1,0,0),(0,1,0),(0,0,1),(1,1,0),(1,0,1),(0,1,1), and
+(1,1,1).  The bit strings correspond exactly to the vertices
+by the mapping $$b_1b_2b_3 \rightarrow (b_1,b_2,b_3).$$
+
+Our consideration of fitness landscapes was focussed on the
+{\it order} of the fitness values.  For this reason, we are
+able to push the analogy with the cube an extra step, and
+visual a fitness landscape as a cube with directed edges,
+where the direction is determined by comparison of the
+fitness values of the two connected vertices.  (Our
+convention was that the arrows pointed toward the higher
+fitness, so we can think of the direction as the tendency of
+evolution as well.)
+
+We desired a complete listing of all three loci two state
+fitness landscapes with satisfy the Dyck condition described
+in the main text.  To avoid redundancy, we did not include
+any two fitness landscapes where, when viewed as cubes with
+directed edges, one was a symmetric transformation of the
+other.  For example, the following three fitness landscapes
+are symmetric transformations of each other.  
+
+\vskip \baselineskip
+
+\def\bob#1#2#3{\count255=#3 \advance \count255 by
+1 \ifnum \count255=2 \advance\count255 by -2 #2#1\number\count255\else#2#1\number\count255\fi}
+
+\def\sue#1#2#3{\count255=#3\advance\count255 by 1 \ifnum
+\count255=2 \advance\count255 by -2
+#1#2\number\count255\else#1#2\number\count255\fi}
+
+\tikzpicture[nodes={scale=0.5},scale=0.5] {\node (000) at (0,0) {000};
+		\node (001) at (0,2) {001};
+		\node (010) at (2,0) {010};
+		\node (100) at (1,1) {100};
+		\node (110) at (3,1) {110};
+		\node (011) at (2,2) {011};
+		\node (101) at (1,3) {101};
+		\node (111) at (3,3) {111};
+		\draw (000) edge [->] (001);
+		\draw (000) edge [->](010);
+		\draw (000) edge [->](100);
+		\draw (100) edge [->](110);
+		\draw (010) edge [->](110);
+		\draw (001) edge [<-](011);
+		\draw (010) edge [<-](011);
+		\draw (001) edge [<-](101);
+		\draw (101) edge [<-](111);
+		\draw (011) edge [->](111);
+		\draw (101) edge [->](100);
+		\draw (111) edge [->](110);
+		};
+\endtikzpicture
+\quad 
+\tikzpicture[nodes={scale=0.5},scale=0.5] 
+		{\node (000) at (0,0) {\bob000};
+		\node (001) at (0,2) {\bob001};
+		\node (010) at (2,0) {\bob010};
+		\node (100) at (1,1) {\bob100};
+		\node (110) at (3,1) {\bob110};
+		\node (011) at (2,2) {\bob011};
+		\node (101) at (1,3) {\bob101};
+		\node (111) at (3,3) {\bob111};
+		\draw (000) edge [->] (001);
+		\draw (000) edge [->](010);
+		\draw (000) edge [->](100);
+		\draw (100) edge [->](110);
+		\draw (010) edge [->](110);
+		\draw (001) edge [<-](011);
+		\draw (010) edge [<-](011);
+		\draw (001) edge [<-](101);
+		\draw (101) edge [<-](111);
+		\draw (011) edge [->](111);
+		\draw (101) edge [->](100);
+		\draw (111) edge [->](110);
+		};
+\endtikzpicture{
+\quad
+\tikzpicture[nodes={scale=0.5},scale=0.5] 
+		{\node (000) at (0,0) {\sue000};
+		\node (001) at (0,2) {\sue001};
+		\node (010) at (2,0) {\sue010};
+		\node (100) at (1,1) {\sue100};
+		\node (110) at (3,1) {\sue110};
+		\node (011) at (2,2) {\sue011};
+		\node (101) at (1,3) {\sue101};
+		\node (111) at (3,3) {\sue111};
+		\draw (000) edge [->] (001);
+		\draw (000) edge [->](010);
+		\draw (000) edge [->](100);
+		\draw (100) edge [->](110);
+		\draw (010) edge [->](110);
+		\draw (001) edge [<-](011);
+		\draw (010) edge [<-](011);
+		\draw (001) edge [<-](101);
+		\draw (101) edge [<-](111);
+		\draw (011) edge [->](111);
+		\draw (101) edge [->](100);
+		\draw (111) edge [->](110);
+		};
+\endtikzpicture
+
+\vskip \baselineskip
+
+In the end we
+found 20 ``unique'' fitness landscapes which satisfied the
+Dyck condition.  This was out of 54 possible ``unique''
+fitness landscapes in total.  
+
+\bye
+
+
+
