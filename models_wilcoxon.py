@@ -9,7 +9,7 @@ __author__ = "@gavruskin"
 
 
 # Returns the ordering of vectors of measurements according to Wilcoxon rank-sum test:
-def rank_sum_3_sites(measurements):
+def rank_sum_3_sites(measurements, details=False):
     output = [1, 2, 3, 4, 5, 6, 7, 8]
     done = False
     while not done:
@@ -18,6 +18,9 @@ def rank_sum_3_sites(measurements):
             if ranksums(measurements[output[i] - 1], measurements[output[i+1] - 1])[0] < 0:
                 output[i], output[i+1] = output[i+1], output[i]
                 done = False
+    if details:
+        for i in range(len(measurements) - 1):
+            print(ranksums(measurements[output[i] - 1], measurements[output[i + 1] - 1]))
     return output
 
 
