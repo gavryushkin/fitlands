@@ -28,7 +28,7 @@ See [below](https://github.com/gavruskin/fitlands#analysis-of-two--and-three-way
 
 
 ## HIV data analysis from [\[1\]](https://github.com/gavruskin/fitlands#references)
-To reproduce the analysis of the HIV-1 data from the upcoming paper by Krona, Gavryushkin, Greene, and Beerenwinkel [\[1\]](https://github.com/gavruskin/fitlands#references), run the `data_HIV_2007_circuit_analysis.py` script, for example, by:
+To reproduce the analysis of the HIV-1 data from the upcoming paper by Crona, Gavryushkin, Greene, and Beerenwinkel [\[1\]](https://github.com/gavruskin/fitlands#references), run the `data_HIV_2007_circuit_analysis.py` script, for example, by:
 ```
 python data_HIV_2007_circuit_analysis.py
 ```
