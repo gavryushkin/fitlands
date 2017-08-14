@@ -1,8 +1,7 @@
 from three_way_epistasis import epistasis_positive, epistasis_negative
 import numpy
 
-
-__author__ = "@gavruskin"
+__author__ = '@gavruskin'
 
 
 # Returns a pair of truth values for positive and (then) negative epistasis
