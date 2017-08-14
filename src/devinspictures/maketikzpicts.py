@@ -19,13 +19,13 @@ def make_cube(file):
 	# Make title and determine color for tikz file
 	newfile = re.sub('mat(s?)','cube\\1',file)+'.tex'
 	if re.search('mats',file):
-		color='red'
+		color='PureRed'
 	else: color='black'
 
 	fd_w = open(newfile,'w')
 
 	fd_w.write('\\begin{tikzpicture}\n\
-[very thick,'+color+',->]\n')
+[very thick, color='+color+',->]\n')
 	
 	#coordinates
 	labels = ['000','001','010','011',
@@ -59,4 +59,3 @@ def make_cube(file):
 	return newfile
 
 print(make_cube(file))
-
