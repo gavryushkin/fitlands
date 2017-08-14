@@ -14,8 +14,7 @@ def get_geno_number(genotype_binary):
 # Returns a pair of truth values for positive and (then) negative epistasis derived from ranking w.
 # For three way epistasis: positives = {1, 5, 6, 7}, negatives = {4, 3, 2, 8}, repetitions = [1, 1, 1, 1, 1, 1, 1, 1]
 # w_0000, w_0001 ... enumerated in the order of binary numbers, e.g. w_1000 comes after w_0111:
-# w = [0000, 0001, 0010, 0011, 0100, 0101, 0110, 0111, 1000, 1001, 1010, 1011, 1100, 1101, 1110, 1111]; indices:
-# w = [   1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14,   15,   16]
+# w = [0000, 0001, 0010, 0011, 0100, 0101, 0110, 0111, 1000, 1001, 1010, 1011, 1100, 1101, 1110, 1111]
 # u0011 = 0000 + 0100 + 1000 + 1100 + 0011 + 0111 + 1011 + 1111 - 0001 - 0101 - 1001 - 1101 - 0010 - 0110 - 1010 - 1110
 # u0101 = 0000 + 0010 + 1000 + 1010 + 0101 + 0111 + 1101 + 1111 - 0001 - 0011 - 1001 - 1011 - 0100 - 0110 - 1100 - 1110
 # u0110 = 0000 + 0001 + 1000 + 1001 + 0110 + 0111 + 1110 + 1111 - 0010 - 0011 - 1010 - 1011 - 0100 - 0101 - 1100 - 1101
@@ -28,6 +27,7 @@ def get_geno_number(genotype_binary):
 # u1110 = 0000 + 0001 + 0110 + 0111 + 1010 + 1011 + 1100 + 1101 - 0010 - 0011 - 0100 - 0101 - 1000 - 1001 - 1110 - 1111
 # u1111 = even_number_of_1 - odd_number_of_1
 def four_way_from_ranking(w, u=1111):
+    w = [get_geno_number(i) for i in w]
     repetitions = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     output = []
     # u_0101
