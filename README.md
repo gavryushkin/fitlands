@@ -204,7 +204,6 @@ TBA
 
 
 ## References
-[1] Crona, Gavryushkin, Greene, and Beerenwinkel. New tools for detecting higher order epistasis. _To appear,_ 2016.
+[1] Crona, Gavryushkin, Greene, and Beerenwinkel. New tools for detecting higher order epistasis. [bioRxiv,](https://doi.org/10.1101/137372) 2016.
 
 [2] Beerenwinkel, Pachter, and Sturmfels. Epistasis and Shapes of Fitness Landscapes. _Statistica Sinica,_ 17: 1317-42, 2007.
-
