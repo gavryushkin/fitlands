@@ -132,7 +132,6 @@ __pycache__
 *.txt
 *#
 
-*.md
 .ipynb_checkpoints/
 *.xlsx
 *.csv
