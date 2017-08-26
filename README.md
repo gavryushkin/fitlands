@@ -1,4 +1,4 @@
-Here we implement all the algorithms designed in the following paper:
+Here we implement all the algorithms designed in the following paper ([DOI 10.1101/180976](https://doi.org/10.1101/180976))
 
 ## The geometry of partial fitness orders and an efficient method for detecting genetic interactions
 
